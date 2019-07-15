@@ -116,6 +116,10 @@ class User(db.Model, UserMixin):
     def getAllUsers(self):
         return User.query.all()
 
+    def get_orders(id):
+        orders = db.session.execute('SELECT orders.o_id, orders.book_name, orders.qty, orders.price, orders.date from orders,user where user_id=:id and user.id = orders.o_id',{'id': id})
+        return orders
+
     def createUser(_username, _password):
         new_user = User(username=_username, password_hash=_password)
         db.session.add(new_user)

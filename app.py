@@ -136,9 +136,11 @@ def get_user(id):
     response = Response(user_schema.dumps(user).data, status=201, mimetype='application/json')
     return response
 
-@app.route('/user/orders')
-def get_user_orders():
+@app.route('/user/<int:id>/orders')
+def get_user_orders(id):
     orders = User.get_orders()
+    order = OrderSchema(many=True)
+    return Response(order.dumps(orders).data,status=201,mimetype='application/json')
 
 
 @app.route('/books/<int:isbn>', methods=['PUT'])
