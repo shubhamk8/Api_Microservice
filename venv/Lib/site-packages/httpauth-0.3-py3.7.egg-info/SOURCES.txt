@@ -1,0 +1,6 @@
+README.rst
+httpauth.py
+httpauth.egg-info/PKG-INFO
+httpauth.egg-info/SOURCES.txt
+httpauth.egg-info/dependency_links.txt
+httpauth.egg-info/top_level.txt
