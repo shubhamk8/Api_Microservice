@@ -101,16 +101,15 @@ def get_book_location(name):
 @app.route('/inventory/<string:name>/<int:pincode>')
 def check_availability(name, pincode):
     result = Inventory.is_available(name, pincode)
-    if result["quantity"] is not 0:
+    print(result)
+    if result['quantity'] is not 0:
         message = {
             "msg": "This Book is available for ordering"
         }
         response = Response(json.dumps(message), status=200, mimetype='application/json')
         return response
     else:
-        message = {
-            "msg": "Sorry!!.. This Book is not available at your location"
-        }
+        message = {"msg": "Sorry!!.. This Book is not available at your location"}
         response = Response(json.dumps(message), status=200, mimetype='application/json')
         return response
 
@@ -142,7 +141,8 @@ def get_user(id):
 @app.route('/user/<int:id>/orders')
 def get_user_orders(id):
     orders = User.get_orders(id)
-    return Response(orders, status=201, mimetype='application/json')
+    result = OrderSchema(many=True)
+    return Response(result.dumps(orders).data, status=201, mimetype='application/json')
 
 
 @app.route('/user/<int:id>/order', methods=['post'])

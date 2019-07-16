@@ -6,10 +6,11 @@ import os
 import decimal
 import base64
 from flask_login import UserMixin
+from marshmallow import Schema
 
 db = SQLAlchemy(app)
 
-link = db.Table('inv_loc', db.Column('i_id', db.Integer, db.ForeignKey('inventory.i_id')),
+link = db.Table('inv_loc',db.Column('id',db.Integer, primary_key=True), db.Column('i_id', db.Integer, db.ForeignKey('inventory.i_id')),
                 db.Column('l_id', db.Integer, db.ForeignKey('location.l_id')), db.Column('quantity', db.Integer))
 
 
@@ -62,7 +63,7 @@ class Inventory(db.Model):
     book_price = db.Column(db.Float)
     book_author = db.Column(db.String(30))
     book_isbn = db.Column(db.Integer)
-    _loc = db.relationship('Location', secondary=link, lazy='joined', backref=db.backref('inventory', lazy='dynamic'))
+    locations = db.relationship('Location', secondary=link, lazy='joined', backref=db.backref('inventory', lazy='dynamic'))
 
     def add(book_name, book_price, book_author, book_isbn):
         new_book = Inventory(book_name=book_name, book_price=book_price, book_author=book_author, book_isbn=book_isbn)
@@ -76,12 +77,11 @@ class Inventory(db.Model):
         return Inventory.query.filter_by(book_name=name).first()
 
     def is_available(book_name, pincode):
-        qty = db.session.execute(
+        result = db.session.execute(
             'SELECT inv_loc.quantity, inv_loc.i_id, inv_loc.l_id from inventory,inv_loc,location where '
             'inventory.book_name= :book and location.pincode= :pincode and location.l_id=inv_loc.l_id and '
             'inventory.i_id=inv_loc.i_id',
-            {'book': book_name, 'pincode': pincode})
-        result = json.dumps([dict(r) for r in qty], default=User.alchemyencoder)
+            {'book': book_name, 'pincode': pincode}).first()
         return result
 
 
@@ -124,11 +124,8 @@ class User(db.Model, UserMixin):
             return float(obj)
 
     def get_orders(id):
-        orders = db.session.execute(
-            'SELECT orders.o_id as order_id,user.id as user_id, orders.book_name, orders.qty as quantity, '
-            'orders.total_amount, orders.date from orders,user where user_id=:id and user.id = orders.o_id',
-            {'id': id})
-        return json.dumps([dict(r) for r in orders], default=User.alchemyencoder)
+        orders = Orders.query.filter_by(user_id=id).order_by(Orders.o_id).all()
+        return orders
 
     def createUser(_username, _password):
         new_user = User(username=_username, password_hash=_password)
@@ -162,6 +159,7 @@ class Orders(db.Model):
     qty = db.Column(db.Integer)
     total_amount = db.Column(db.Float, nullable=False)
     date = db.Column(db.DateTime)
+    pincode = db.Column(db.Integer)
 
     def get_all_orders(self):
         pass
@@ -172,10 +170,8 @@ class Orders(db.Model):
 
     def place_order(user_id, book_name, qty, price, pincode):
         data = Inventory.is_available(book_name, pincode)
-
-        new_qty = int(data["quantity"]) - int(qty)
-        db.session.execute('update inv_loc set quantity=:qty where i_id=:iid and l_id=:lid',
-                           {'qty': new_qty, 'iid': data["i_id"], 'lid': data["l_id"]})
+        new_qty = int(data.quantity) - int(qty)
+        db.session.execute('update inv_loc set quantity=:qty where i_id=:iid and l_id=:lid', {'qty': new_qty, 'iid': data.i_id, 'lid': data.l_id})
         new_order = Orders(user_id=user_id, book_name=book_name, qty=qty, total_amount=float(price) * float(qty),
                            date=datetime.utcnow(), pincode=pincode)
         db.session.add(new_order)
