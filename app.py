@@ -25,14 +25,6 @@ def token_required(f):
     return wrapper
 
 
-@app.route('/inventory')
-def get_inventory():
-    books = Inventory.get_inventory('self')
-    books_schema = InventorySchema(many=True)
-    response = Response(books_schema.dumps(books).data, status=201, mimetype="application/json")
-    return response
-
-
 @app.route('/login', methods=['POST'])
 def get_token():
     request_data = request.get_json()
@@ -53,6 +45,14 @@ def validate(bookObject):
         return True
     else:
         return True
+
+
+@app.route('/inventory')
+def get_inventory():
+    books = Inventory.get_inventory('self')
+    books_schema = InventorySchema(many=True)
+    response = Response(books_schema.dumps(books).data, status=201, mimetype="application/json")
+    return response
 
 
 @app.route('/inventory', methods=['POST'])
@@ -90,15 +90,16 @@ def get_book_isbn(name):
 @app.route('/inventory/<string:name>/locations')
 def get_book_location(name):
     locations = db.session.execute(
-        'select location.pincode from inventory,location,inv_loc where book_name= :name and location.l_id=inv_loc.l_id and inventory.i_id=inv_loc.i_id',
+        'select location.pincode from inventory,location,inv_loc where book_name= :name and '
+        'location.l_id=inv_loc.l_id and inventory.i_id=inv_loc.i_id',
         {'name': name})
     locationSchema = LocationSchema(many=True)
     response = Response(locationSchema.dumps(locations).data, status=201, mimetype='application/json')
     return response
 
 
-@app.route('/inventory/<string:name>/<int:pincode>/order')
-def order(name, pincode):
+@app.route('/inventory/<string:name>/<int:pincode>')
+def check_availability(name, pincode):
     result = Inventory.is_available(name, pincode)
     if result["quantity"] is not 0:
         message = {
@@ -137,6 +138,7 @@ def get_user(id):
     response = Response(user_schema.dumps(user).data, status=201, mimetype='application/json')
     return response
 
+
 @app.route('/user/<int:id>/orders')
 def get_user_orders(id):
     orders = User.get_orders(id)
@@ -150,46 +152,45 @@ def place_order(id):
     return Response('', status=201, mimetype='application/json')
 
 
-@app.route('/books/<int:isbn>', methods=['PUT'])
-def replace_book(isbn):
-    request_data = request.get_json()
-    if not validate(request_data):
-        invalidBookObjectErrorMsg = {
-            "error": "Valid Book object must be passed in the request",
-            "helpString": "Data passed in similar to this {'name':'bookname','price':299}"
-        }
-        response = Response(jsonify(invalidBookObjectErrorMsg), status=400, mimetype='application/json')
-        return response
-    Book.replace_book(isbn, request_data['name'], request_data['price'])
-    response = Response("", status=204)
-    return response
-
-
-@app.route('/books/<int:isbn>', methods={'PATCH'})
-def update_book(isbn):
-    request_data = request.get_json()
-    if "name" in request_data:
-        Book.update_book_name(isbn, request_data['name'])
-    if "price" in request_data:
-        Book.update_book_price(isbn, request_data['price'])
-    response = Response("", status=204)
-    response.headers['Location'] = "/books/" + str(isbn)
-    return response
-
-
-@app.route('/books/<int:isbn>', methods=['DELETE'])
-def delete_book(isbn):
-    if Book.delete_book(isbn):
-        response = Response("", status=200, mimetype="application/json")
-        return response
-    else:
-        invalidBookMsg = {
-            "error": "Book with provided isbn number is not found"
-        }
-
-        response = Response(json.dumps(invalidBookMsg), status=404, mimetype="application/json")
-        return response
-
-
 if __name__ == '__main__':
     app.run(debug=True)
+
+# @app.route('/books/<int:isbn>', methods=['PUT'])
+# def replace_book(isbn):
+#     request_data = request.get_json()
+#     if not validate(request_data):
+#         invalidBookObjectErrorMsg = {
+#             "error": "Valid Book object must be passed in the request",
+#             "helpString": "Data passed in similar to this {'name':'bookname','price':299}"
+#         }
+#         response = Response(jsonify(invalidBookObjectErrorMsg), status=400, mimetype='application/json')
+#         return response
+#     Book.replace_book(isbn, request_data['name'], request_data['price'])
+#     response = Response("", status=204)
+#     return response
+#
+#
+# @app.route('/books/<int:isbn>', methods={'PATCH'})
+# def update_book(isbn):
+#     request_data = request.get_json()
+#     if "name" in request_data:
+#         Book.update_book_name(isbn, request_data['name'])
+#     if "price" in request_data:
+#         Book.update_book_price(isbn, request_data['price'])
+#     response = Response("", status=204)
+#     response.headers['Location'] = "/books/" + str(isbn)
+#     return response
+#
+#
+# @app.route('/books/<int:isbn>', methods=['DELETE'])
+# def delete_book(isbn):
+#     if Book.delete_book(isbn):
+#         response = Response("", status=200, mimetype="application/json")
+#         return response
+#     else:
+#         invalidBookMsg = {
+#             "error": "Book with provided isbn number is not found"
+#         }
+#
+#         response = Response(json.dumps(invalidBookMsg), status=404, mimetype="application/json")
+#         return response
