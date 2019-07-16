@@ -3,14 +3,13 @@ from datetime import datetime, timedelta
 from flask_sqlalchemy import SQLAlchemy
 from settings import *
 import os
-import decimal
 import base64
 from flask_login import UserMixin
-from marshmallow import Schema
 
 db = SQLAlchemy(app)
 
-link = db.Table('inv_loc',db.Column('id',db.Integer, primary_key=True), db.Column('i_id', db.Integer, db.ForeignKey('inventory.i_id')),
+link = db.Table('inv_loc', db.Column('id', db.Integer, primary_key=True),
+                db.Column('i_id', db.Integer, db.ForeignKey('inventory.i_id')),
                 db.Column('l_id', db.Integer, db.ForeignKey('location.l_id')), db.Column('quantity', db.Integer))
 
 
@@ -63,7 +62,8 @@ class Inventory(db.Model):
     book_price = db.Column(db.Float)
     book_author = db.Column(db.String(30))
     book_isbn = db.Column(db.Integer)
-    locations = db.relationship('Location', secondary=link, lazy='joined', backref=db.backref('inventory', lazy='dynamic'))
+    locations = db.relationship('Location', secondary=link, lazy='joined',
+                                backref=db.backref('inventory', lazy='dynamic'))
 
     def add(book_name, book_price, book_author, book_isbn):
         new_book = Inventory(book_name=book_name, book_price=book_price, book_author=book_author, book_isbn=book_isbn)
@@ -116,13 +116,6 @@ class User(db.Model, UserMixin):
     def getAllUsers(self):
         return User.query.all()
 
-    def alchemyencoder(obj):
-        """JSON encoder function for SQLAlchemy special classes."""
-        if isinstance(obj, datetime.date):
-            return obj.isoformat()
-        elif isinstance(obj, decimal.Decimal):
-            return float(obj)
-
     def get_orders(id):
         orders = Orders.query.filter_by(user_id=id).order_by(Orders.o_id).all()
         return orders
@@ -171,7 +164,8 @@ class Orders(db.Model):
     def place_order(user_id, book_name, qty, price, pincode):
         data = Inventory.is_available(book_name, pincode)
         new_qty = int(data.quantity) - int(qty)
-        db.session.execute('update inv_loc set quantity=:qty where i_id=:iid and l_id=:lid', {'qty': new_qty, 'iid': data.i_id, 'lid': data.l_id})
+        db.session.execute('update inv_loc set quantity=:qty where i_id=:iid and l_id=:lid',
+                           {'qty': new_qty, 'iid': data.i_id, 'lid': data.l_id})
         new_order = Orders(user_id=user_id, book_name=book_name, qty=qty, total_amount=float(price) * float(qty),
                            date=datetime.utcnow(), pincode=pincode)
         db.session.add(new_order)
