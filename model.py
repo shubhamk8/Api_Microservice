@@ -2,7 +2,7 @@ import json
 from datetime import datetime, timedelta
 from flask_sqlalchemy import SQLAlchemy
 from settings import *
-import os
+import os, decimal
 import base64
 from flask_login import UserMixin
 
@@ -76,14 +76,10 @@ class Inventory(db.Model):
 
     def is_available(book_name, pincode):
         qty = db.session.execute(
-            'SELECT inv_loc.quantity from inventory,inv_loc,location where inventory.book_name= :book and location.pincode= :pincode and location.l_id=inv_loc.l_id and inventory.i_id=inv_loc.i_id',
+            'SELECT inv_loc.quantity, inv_loc.i_id, inv_loc.l_id from inventory,inv_loc,location where inventory.book_name= :book and location.pincode= :pincode and location.l_id=inv_loc.l_id and inventory.i_id=inv_loc.i_id',
             {'book': book_name, 'pincode': pincode})
-        result = qty.first()
-        if result is not None:
-            return True
-        else:
-            return False
-
+        result = json.dumps([dict(r) for r in qty], default=User.alchemyencoder)
+        return result
 
 class Location(db.Model):
     l_id = db.Column(db.Integer, primary_key=True)
@@ -104,7 +100,7 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String, nullable=False)
     token = db.Column(db.String(50), index=True, unique=True)
     token_expiration = db.Column(db.DateTime)
-    orders = db.relationship('Order', backref='user', lazy='dynamic')
+    orders = db.relationship('Orders', backref='user', lazy='dynamic')
 
     def user_pass_match(_username, _password):
         user = User.query.filter_by(username=_username).filter_by(password=_password).first()
@@ -116,9 +112,21 @@ class User(db.Model, UserMixin):
     def getAllUsers(self):
         return User.query.all()
 
+    def alchemyencoder(obj):
+        """JSON encoder function for SQLAlchemy special classes."""
+        if isinstance(obj, datetime.date):
+            return obj.isoformat()
+        elif isinstance(obj, decimal.Decimal):
+            return float(obj)
+
+
     def get_orders(id):
-        orders = db.session.execute('SELECT orders.o_id, orders.book_name, orders.qty, orders.price, orders.date from orders,user where user_id=:id and user.id = orders.o_id',{'id': id})
-        return orders
+        orders = db.session.execute(
+            'SELECT orders.o_id as order_id,user.id as user_id, orders.book_name, orders.qty as quantity, orders.total_amount, orders.date from orders,user where user_id=:id and user.id = orders.o_id',
+            {'id': id})
+        return json.dumps([dict(r) for r in orders], default=User.alchemyencoder)
+
+
 
     def createUser(_username, _password):
         new_user = User(username=_username, password_hash=_password)
@@ -145,24 +153,27 @@ class User(db.Model, UserMixin):
         return user
 
 
-
-class Order(db.Model):
+class Orders(db.Model):
     o_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     book_name = db.Column(db.String, nullable=False)
     qty = db.Column(db.Integer)
-    price = db.Column(db.Float, nullable=False)
+    total_amount = db.Column(db.Float, nullable=False)
     date = db.Column(db.DateTime)
 
     def get_all_orders(self):
         pass
 
     def get_order(id):
-        order = Order.query.filter_by(o_id=id).first()
+        order = Orders.query.filter_by(o_id=id).first()
         return order
 
-    def place_order(id, user_id, book_name, qty, price):
-        new_order = Order(id=id, user_id=user_id, book_name=book_name, qty=qty, price=price)
+    def place_order(user_id, book_name, qty, price, pincode):
+        data = Inventory.is_available(book_name, pincode)
+        
+        new_qty = int(data["quantity"])-int(qty)
+        db.session.execute('update inv_loc set quantity=:qty where i_id=:iid and l_id=:lid', {'qty':new_qty,'iid': data["i_id"], 'lid':data["l_id"]})
+        new_order = Orders(user_id=user_id, book_name=book_name, qty=qty, total_amount=float(price)*float(qty), date=datetime.utcnow(), pincode=pincode)
         db.session.add(new_order)
         db.session.commit()
 
@@ -187,7 +198,7 @@ class UserSchema(ma.ModelSchema):
 
 class OrderSchema(ma.ModelSchema):
     class Meta:
-        model = Order
+        model = Orders
         sqla_session = db.session
 
 

@@ -99,7 +99,8 @@ def get_book_location(name):
 
 @app.route('/inventory/<string:name>/<int:pincode>/order')
 def order(name, pincode):
-    if Inventory.is_available(name, pincode):
+    result = Inventory.is_available(name, pincode)
+    if result["quantity"] is not 0:
         message = {
             "msg": "This Book is available for ordering"
         }
@@ -138,9 +139,15 @@ def get_user(id):
 
 @app.route('/user/<int:id>/orders')
 def get_user_orders(id):
-    orders = User.get_orders()
-    order = OrderSchema(many=True)
-    return Response(order.dumps(orders).data,status=201,mimetype='application/json')
+    orders = User.get_orders(id)
+    return Response(orders, status=201, mimetype='application/json')
+
+
+@app.route('/user/<int:id>/order', methods=['post'])
+def place_order(id):
+    data = request.get_json()
+    Orders.place_order(id, data['book_name'], data['qty'], data['price'], data['pincode'])
+    return Response('', status=201, mimetype='application/json')
 
 
 @app.route('/books/<int:isbn>', methods=['PUT'])
