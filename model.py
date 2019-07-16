@@ -2,7 +2,8 @@ import json
 from datetime import datetime, timedelta
 from flask_sqlalchemy import SQLAlchemy
 from settings import *
-import os, decimal
+import os
+import decimal
 import base64
 from flask_login import UserMixin
 
@@ -122,7 +123,8 @@ class User(db.Model, UserMixin):
 
     def get_orders(id):
         orders = db.session.execute(
-            'SELECT orders.o_id as order_id,user.id as user_id, orders.book_name, orders.qty as quantity, orders.total_amount, orders.date from orders,user where user_id=:id and user.id = orders.o_id',
+            'SELECT orders.o_id as order_id,user.id as user_id, orders.book_name, orders.qty as quantity, '
+            'orders.total_amount, orders.date from orders,user where user_id=:id and user.id = orders.o_id',
             {'id': id})
         return json.dumps([dict(r) for r in orders], default=User.alchemyencoder)
 
