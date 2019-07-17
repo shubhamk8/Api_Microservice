@@ -49,7 +49,7 @@ def validate(bookObject):
 
 @app.route('/inventory')
 def get_inventory():
-    books = Inventory.get_inventory('self')
+    books = Book.get_inventory('self')
     books_schema = InventorySchema(many=True)
     response = Response(books_schema.dumps(books).data, status=201, mimetype="application/json")
     return response
@@ -59,7 +59,7 @@ def get_inventory():
 def add_book():
     request_data = request.get_json()
     if validate(request_data):
-        Inventory.add(request_data['name'], request_data['price'], request_data['author'], request_data['isbn'])
+        Book.add(request_data['name'], request_data['price'], request_data['author'], request_data['isbn'])
         resp = Response("", status=201, mimetype='application/json')
         resp.headers['Location'] = "/inventory/" + str(request_data['name'])
         return resp
@@ -74,7 +74,7 @@ def add_book():
 
 @app.route('/inventory/<string:name>')
 def get_book_isbn(name):
-    book = Inventory.get_book(name)
+    book = Book.get_book(name)
     if book is None:
         invalidBookMsg = {
             "error": "Book with provided Name is not found"
@@ -100,7 +100,7 @@ def get_book_location(name):
 
 @app.route('/inventory/<string:name>/<int:pincode>')
 def check_availability(name, pincode):
-    result = Inventory.is_available(name, pincode)
+    result = Book.is_available(name, pincode)
     print(result)
     if result['quantity'] is not 0:
         message = {
