@@ -1,10 +1,7 @@
-from flask import Flask, jsonify, request, Response
-from datetime import datetime, timedelta
-from settings import *
-from flask_login import login_required, login_user, current_user
-from model import *
-import json
 from functools import wraps
+from flask import jsonify, request, Response
+from flask_login import login_user, current_user
+from model import *
 
 
 @login_manager.user_loader
@@ -89,20 +86,16 @@ def get_book_isbn(name):
 
 @app.route('/inventory/<string:name>/locations')
 def get_book_location(name):
-    locations = db.session.execute(
-        'select location.pincode from inventory,location,inv_loc where book_name= :name and '
-        'location.l_id=inv_loc.l_id and inventory.i_id=inv_loc.i_id',
-        {'name': name})
-    locationSchema = LocationSchema(many=True)
-    response = Response(locationSchema.dumps(locations).data, status=201, mimetype='application/json')
+    locations = db.session.query(Inventory.pincode).filter(Book.book_name == name).filter(Location.pincode == Inventory.pincode).filter(Inventory.book_id == Book.book_id).all()
+    location_schema = LocationSchema(many=True)
+    response = Response(location_schema.dumps(locations).data, status=201, mimetype='application/json')
     return response
 
 
 @app.route('/inventory/<string:name>/<int:pincode>')
 def check_availability(name, pincode):
-    result = Book.is_available(name, pincode)
-    print(result)
-    if result['quantity'] is not 0:
+    result = Inventory.is_available(name, pincode)
+    if result is not None:
         message = {
             "msg": "This Book is available for ordering"
         }
@@ -148,8 +141,15 @@ def get_user_orders(id):
 @app.route('/user/<int:id>/order', methods=['post'])
 def place_order(id):
     data = request.get_json()
-    Orders.place_order(id, data['book_name'], data['qty'], data['price'], data['pincode'])
-    return Response('', status=201, mimetype='application/json')
+    result = Orders.place_order(id, data['book_name'], data['qty'], data['price'], data['pincode'])
+    if result is True:
+        message = {"msg": "Order Placed Successfully "}
+        response = Response(json.dumps(message), status=201, mimetype='application/json')
+        return response
+    else:
+        message = {"msg": "Sorry!!.. This Book is not available at your location"}
+        response = Response(json.dumps(message), status=500, mimetype='application/json')
+        return response
 
 
 if __name__ == '__main__':

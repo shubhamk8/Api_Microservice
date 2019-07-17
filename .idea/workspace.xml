@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="7c4b2e7f-cb4e-449b-84dd-6de0eb6fa694" name="Default Changelist" comment="general fixes">
+    <list default="true" id="7c4b2e7f-cb4e-449b-84dd-6de0eb6fa694" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database.db" beforeDir="false" afterPath="$PROJECT_DIR$/database.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/model.py" afterDir="false" />
     </list>
     <ignored path="venv/" />
@@ -35,6 +36,30 @@
         <item name="database.db" type="feb32156:DbDataSourceImpl" />
         <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
       </path>
+      <path>
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="database.db" type="feb32156:DbDataSourceImpl" />
+        <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
+        <item name="main: schema" type="981a47c2:SqliteImplModel$Schema" />
+      </path>
+      <path>
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="database.db" type="feb32156:DbDataSourceImpl" />
+        <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
+        <item name="main: schema" type="981a47c2:SqliteImplModel$Schema" />
+        <item name="book: table" type="3d80ac25:SqliteImplModel$Table" />
+      </path>
+      <path>
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="database.db" type="feb32156:DbDataSourceImpl" />
+        <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
+        <item name="main: schema" type="981a47c2:SqliteImplModel$Schema" />
+        <item name="inventory: table" type="3d80ac25:SqliteImplModel$Table" />
+      </path>
+      <path>
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="SQLite - identifier.sqlite" type="feb32156:DbDataSourceImpl" />
+      </path>
     </expand>
     <select />
   </component>
@@ -43,15 +68,13 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1120">
-              <caret line="56" selection-start-line="56" selection-end-line="56" />
+            <state relative-caret-position="280">
+              <caret line="14" column="41" lean-forward="true" selection-start-line="14" selection-start-column="41" selection-end-line="14" selection-end-column="41" />
               <folding>
-                <element signature="e#0#51#0" expanded="true" />
-                <element signature="e#1815#2085#0" />
-                <element signature="e#2512#2953#0" />
+                <element signature="e#0#27#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -60,33 +83,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="380">
-              <caret line="64" column="35" selection-start-line="64" selection-start-column="35" selection-end-line="64" selection-end-column="35" />
+            <state relative-caret-position="400">
+              <caret line="161" column="25" selection-start-line="161" selection-start-column="25" selection-end-line="161" selection-end-column="25" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="das://bf1ff7c4-974b-42c0-b281-d6ba219798e5/schema/main/table/book">
-          <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-            <state projectRestartId="e54f27ae-78f0-46da-a2eb-dff9d854224a">
-              <filtering>
-                <filter text="" />
-              </filtering>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="das://bf1ff7c4-974b-42c0-b281-d6ba219798e5/schema/main/table/location">
-          <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-            <state projectRestartId="e54f27ae-78f0-46da-a2eb-dff9d854224a">
-              <filtering>
-                <filter text="" />
-              </filtering>
             </state>
           </provider>
         </entry>
@@ -100,47 +101,6 @@
               </filtering>
             </state>
           </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="das://bf1ff7c4-974b-42c0-b281-d6ba219798e5/schema/main/table/sqlite_master">
-          <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-            <state projectRestartId="e54f27ae-78f0-46da-a2eb-dff9d854224a">
-              <filtering>
-                <filter text="" />
-              </filtering>
-              <column-attributes>
-                <column name="rowid" enabled="false" position="-1" />
-              </column-attributes>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="das://bf1ff7c4-974b-42c0-b281-d6ba219798e5/schema/main/table/user">
-          <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-            <state projectRestartId="e54f27ae-78f0-46da-a2eb-dff9d854224a">
-              <filtering>
-                <filter text="" />
-              </filtering>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="das://bf1ff7c4-974b-42c0-b281-d6ba219798e5/schema/main/table/inventory">
-          <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-            <state projectRestartId="e54f27ae-78f0-46da-a2eb-dff9d854224a">
-              <filtering>
-                <filter text="" />
-              </filtering>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/bf1ff7c4-974b-42c0-b281-d6ba219798e5/console.sql">
-          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
     </leaf>
@@ -159,11 +119,12 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/settings.py" />
-        <option value="$PROJECT_DIR$/app.py" />
         <option value="$APPLICATION_CONFIG_DIR$/consoles/db/cb1f1733-2ea9-4f76-bcd2-3980428daa71/console.sql" />
         <option value="$PROJECT_DIR$/query.py" />
-        <option value="$PROJECT_DIR$/model.py" />
         <option value="$APPLICATION_CONFIG_DIR$/consoles/.datagrid/cell" />
+        <option value="$APPLICATION_CONFIG_DIR$/consoles/db/bf1ff7c4-974b-42c0-b281-d6ba219798e5/console.sql" />
+        <option value="$PROJECT_DIR$/model.py" />
+        <option value="$PROJECT_DIR$/app.py" />
       </list>
     </option>
   </component>
@@ -223,7 +184,7 @@
       <option name="presentableId" value="Default" />
       <updated>1563255161139</updated>
       <workItem from="1563260678063" duration="12899000" />
-      <workItem from="1563337122140" duration="9592000" />
+      <workItem from="1563337122140" duration="18033000" />
     </task>
     <task id="LOCAL-00001" summary="initial commit">
       <created>1563255647369</created>
@@ -274,11 +235,39 @@
       <option name="project" value="LOCAL" />
       <updated>1563348048683</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Database Tables are Modified renamed the tables and modified the dependencies">
+      <created>1563348159643</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1563348159643</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Database Tables are Modified renamed the tables and modified the dependencies">
+      <created>1563348182553</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1563348182553</updated>
+    </task>
+    <task id="LOCAL-00010" summary="general fixes">
+      <created>1563348206683</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1563348206683</updated>
+    </task>
+    <task id="LOCAL-00011" summary="general fixes">
+      <created>1563348636574</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1563348636574</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="22491000" />
+    <option name="totallyTimeSpent" value="30932000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -303,9 +292,9 @@
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.032502707" />
-      <window_info active="true" anchor="bottom" id="Version Control" order="7" visible="true" weight="0.4182015" />
+      <window_info active="true" anchor="bottom" id="Version Control" order="7" visible="true" weight="0.20585048" />
       <window_info anchor="bottom" id="DB Execution Console" order="8" />
-      <window_info anchor="bottom" id="Terminal" order="9" weight="0.11484291" />
+      <window_info anchor="bottom" id="Terminal" order="9" weight="0.1787649" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="bottom" id="Python Console" order="11" />
       <window_info anchor="bottom" id="Database Console" order="12" weight="0.17984831" />
@@ -364,9 +353,10 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="initial commit" />
     <MESSAGE value="Order placing logic fixed now it's also reducing quantity from inventory.." />
-    <MESSAGE value="general fixes" />
     <MESSAGE value="Database modified [Re-structured the tables]" />
-    <option name="LAST_COMMIT_MESSAGE" value="Database modified [Re-structured the tables]" />
+    <MESSAGE value="Database Tables are Modified renamed the tables and modified the dependencies" />
+    <MESSAGE value="general fixes" />
+    <option name="LAST_COMMIT_MESSAGE" value="general fixes" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/auth.py">
@@ -422,18 +412,6 @@
     <entry file="file://$PROJECT_DIR$/query.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/app.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1120">
-          <caret line="56" selection-start-line="56" selection-end-line="56" />
-          <folding>
-            <element signature="e#0#51#0" expanded="true" />
-            <element signature="e#1815#2085#0" />
-            <element signature="e#2512#2953#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="das://cb1f1733-2ea9-4f76-bcd2-3980428daa71/schema/main/table/inv_loc">
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state projectRestartId="e54f27ae-78f0-46da-a2eb-dff9d854224a">
@@ -461,8 +439,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/bf1ff7c4-974b-42c0-b281-d6ba219798e5/console.sql">
-      <provider selected="true" editor-type-id="text-editor" />
+    <entry file="das://bf1ff7c4-974b-42c0-b281-d6ba219798e5/schema/main/table/sqlite_master">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state projectRestartId="e54f27ae-78f0-46da-a2eb-dff9d854224a">
+          <filtering>
+            <filter text="" />
+          </filtering>
+          <column-attributes>
+            <column name="rowid" enabled="false" position="-1" />
+          </column-attributes>
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://bf1ff7c4-974b-42c0-b281-d6ba219798e5/schema/main/table/location">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state projectRestartId="e54f27ae-78f0-46da-a2eb-dff9d854224a">
+          <filtering>
+            <filter text="" />
+          </filtering>
+        </state>
+      </provider>
     </entry>
     <entry file="das://bf1ff7c4-974b-42c0-b281-d6ba219798e5/schema/main/table/book">
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
@@ -473,7 +469,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="das://bf1ff7c4-974b-42c0-b281-d6ba219798e5/schema/main/table/inventory">
+    <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/bf1ff7c4-974b-42c0-b281-d6ba219798e5/console.sql">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="das://bf1ff7c4-974b-42c0-b281-d6ba219798e5/schema/main/table/user">
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state projectRestartId="e54f27ae-78f0-46da-a2eb-dff9d854224a">
           <filtering>
@@ -482,7 +481,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="das://bf1ff7c4-974b-42c0-b281-d6ba219798e5/schema/main/table/location">
+    <entry file="das://bf1ff7c4-974b-42c0-b281-d6ba219798e5/schema/main/table/inventory">
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state projectRestartId="e54f27ae-78f0-46da-a2eb-dff9d854224a">
           <filtering>
@@ -502,32 +501,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="380">
-          <caret line="64" column="35" selection-start-line="64" selection-start-column="35" selection-end-line="64" selection-end-column="35" />
+        <state relative-caret-position="400">
+          <caret line="161" column="25" selection-start-line="161" selection-start-column="25" selection-end-line="161" selection-end-column="25" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="das://bf1ff7c4-974b-42c0-b281-d6ba219798e5/schema/main/table/sqlite_master">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state projectRestartId="e54f27ae-78f0-46da-a2eb-dff9d854224a">
-          <filtering>
-            <filter text="" />
-          </filtering>
-          <column-attributes>
-            <column name="rowid" enabled="false" position="-1" />
-          </column-attributes>
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://bf1ff7c4-974b-42c0-b281-d6ba219798e5/schema/main/table/user">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state projectRestartId="e54f27ae-78f0-46da-a2eb-dff9d854224a">
-          <filtering>
-            <filter text="" />
-          </filtering>
+    <entry file="file://$PROJECT_DIR$/app.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="280">
+          <caret line="14" column="41" lean-forward="true" selection-start-line="14" selection-start-column="41" selection-end-line="14" selection-end-column="41" />
+          <folding>
+            <element signature="e#0#27#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

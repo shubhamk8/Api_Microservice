@@ -28,13 +28,15 @@ class Book(db.Model):
     def get_book(name):
         return Book.query.filter_by(book_name=name).first()
 
-    def is_available(book_name, pincode):
-        result = db.session.execute(
-            'SELECT inv_loc.quantity, inv_loc.i_id, inv_loc.l_id from inventory,inv_loc,location where '
-            'inventory.book_name= :book and location.pincode= :pincode and location.l_id=inv_loc.l_id and '
-            'inventory.i_id=inv_loc.i_id',
-            {'book': book_name, 'pincode': pincode}).first()
-        return result
+    def __repr__(self):
+         book_object = {
+              'id' : self.book_id,
+              'name': self.book_name,
+              'price': self.book_price,
+              'author': self.book_author,
+              'isbn': self.book_isbn
+          }
+         return json.dumps(book_object)
 
 
 class Location(db.Model):
@@ -48,12 +50,33 @@ class Location(db.Model):
         db.session.add(loc)
         db.session.commit()
 
+    def __repr__(self):
+        location_object = {
+            'pincode': self.pincode
+        }
+        return location_object
+
 
 class Inventory(db.Model):
-    id = db.Column(db.Integer,primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     book_id = db.Column(db.Integer, db.ForeignKey('book.book_id'))
     pincode = db.Column(db.Integer, db.ForeignKey('location.pincode'))
     quantity = db.Column(db.Integer)
+
+    def is_available(book_name, pincode):
+        result = db.session.query(Inventory.quantity, Inventory.book_id).filter(Book.book_name == book_name).filter(
+            Location.pincode == pincode).filter(Book.book_id == Inventory.book_id).filter(
+            Location.pincode == Inventory.pincode).first()
+        return result
+
+    def __repr__(self):
+        inventory_object = {
+            'id': self.id,
+            'book_id': self.book_id,
+            'pincode': self.pincode,
+            'quantity': self.quantity
+        }
+        return inventory_object
 
 
 class User(db.Model, UserMixin):
@@ -124,19 +147,19 @@ class Orders(db.Model):
         return order
 
     def place_order(user_id, book_name, qty, price, pincode):
-        data = Book.is_available(book_name, pincode)
+        data = Inventory.is_available(book_name, pincode)
         new_qty = int(data.quantity) - int(qty)
-        db.session.execute('update inv_loc set quantity=:qty where i_id=:iid and l_id=:lid',
-                           {'qty': new_qty, 'iid': data.i_id, 'lid': data.l_id})
+        db.session.query(Inventory).filter(Inventory.book_id == data.book_id).filter(Inventory.pincode == pincode).update({"quantity": new_qty})
         new_order = Orders(user_id=user_id, book_name=book_name, qty=qty, total_amount=float(price) * float(qty),
                            date=datetime.utcnow(), pincode=pincode)
         db.session.add(new_order)
         db.session.commit()
+        return True
 
 
 class InventorySchema(ma.ModelSchema):
     class Meta:
-        model = Book
+        model = Inventory
         sqla_session = db.session
 
 
