@@ -8,73 +8,25 @@ from flask_login import UserMixin
 
 db = SQLAlchemy(app)
 
-link = db.Table('inv_loc', db.Column('id', db.Integer, primary_key=True),
-                db.Column('i_id', db.Integer, db.ForeignKey('inventory.i_id')),
-                db.Column('l_id', db.Integer, db.ForeignKey('location.l_id')), db.Column('quantity', db.Integer))
-
 
 class Book(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80))
-    price = db.Column(db.Float)
-    isbn = db.Column(db.Integer)
-
-    def add_book(_name, _price, _isbn):
-        new_book = Book(name=_name, price=_price, isbn=_isbn)
-        db.session.add(new_book)
-        db.session.commit()
-
-    def get_all_books(self):
-        return Book.query.all()
-
-    def get_book(_isbn):
-        return Book.query.filter_by(isbn=_isbn).first()
-
-    def delete_book(_isbn):
-        is_sucessful = Book.query.filter_by(isbn=_isbn).delete()
-        db.session.commit()
-        return bool(is_sucessful)
-
-    def update_book_price(_isbn, _price):
-        book_to_update = Book.query.filter_by(isbn=_isbn).first()
-        book_to_update.price = _price
-        db.session.add(book_to_update)
-        db.session.commit()
-
-    def update_book_name(_isbn, _name):
-        book_to_update = Book.query.filter_by(isbn=_isbn).first()
-        book_to_update.name = _name
-        db.session.add(book_to_update)
-        db.session.commit()
-
-    def __repr__(self):
-        book_object = {
-            'name': self.name,
-            'price': self.price,
-            'isbn': self.isbn
-        }
-        return json.dumps(book_object)
-
-
-class Inventory(db.Model):
-    i_id = db.Column(db.Integer, primary_key=True)
+    book_id = db.Column(db.Integer, primary_key=True)
     book_name = db.Column(db.String(30))
     book_price = db.Column(db.Float)
     book_author = db.Column(db.String(30))
     book_isbn = db.Column(db.Integer)
-    locations = db.relationship('Location', secondary=link, lazy='joined',
-                                backref=db.backref('inventory', lazy='dynamic'))
+    locations = db.relationship("Inventory")
 
     def add(book_name, book_price, book_author, book_isbn):
-        new_book = Inventory(book_name=book_name, book_price=book_price, book_author=book_author, book_isbn=book_isbn)
+        new_book = Book(book_name=book_name, book_price=book_price, book_author=book_author, book_isbn=book_isbn)
         db.session.add(new_book)
         db.session.commit()
 
     def get_inventory(self):
-        return Inventory.query.all()
+        return Book.query.all()
 
     def get_book(name):
-        return Inventory.query.filter_by(book_name=name).first()
+        return Book.query.filter_by(book_name=name).first()
 
     def is_available(book_name, pincode):
         result = db.session.execute(
@@ -86,8 +38,7 @@ class Inventory(db.Model):
 
 
 class Location(db.Model):
-    l_id = db.Column(db.Integer, primary_key=True)
-    pincode = db.Column(db.Integer)
+    pincode = db.Column(db.Integer, primary_key=True)
 
     def get_loc(self):
         return Location.query.all()
@@ -98,10 +49,21 @@ class Location(db.Model):
         db.session.commit()
 
 
+class Inventory(db.Model):
+    id = db.Column(db.Integer,primary_key=True)
+    book_id = db.Column(db.Integer, db.ForeignKey('book.book_id'))
+    pincode = db.Column(db.Integer, db.ForeignKey('location.pincode'))
+    quantity = db.Column(db.Integer)
+
+
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(20), unique=True, nullable=False)
+    name = db.Column(db.String(80))
+    email = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
+    mobile_no = db.Column(db.Integer)
+    address = db.Column(db.Text)
+    pincode = db.Column(db.Integer, db.ForeignKey('location.pincode'))
     token = db.Column(db.String(50), index=True, unique=True)
     token_expiration = db.Column(db.DateTime)
     orders = db.relationship('Orders', backref='user', lazy='dynamic')
@@ -152,7 +114,7 @@ class Orders(db.Model):
     qty = db.Column(db.Integer)
     total_amount = db.Column(db.Float, nullable=False)
     date = db.Column(db.DateTime)
-    pincode = db.Column(db.Integer)
+    pincode = db.Column(db.Integer, db.ForeignKey('location.pincode'))
 
     def get_all_orders(self):
         pass
@@ -162,7 +124,7 @@ class Orders(db.Model):
         return order
 
     def place_order(user_id, book_name, qty, price, pincode):
-        data = Inventory.is_available(book_name, pincode)
+        data = Book.is_available(book_name, pincode)
         new_qty = int(data.quantity) - int(qty)
         db.session.execute('update inv_loc set quantity=:qty where i_id=:iid and l_id=:lid',
                            {'qty': new_qty, 'iid': data.i_id, 'lid': data.l_id})
@@ -174,7 +136,7 @@ class Orders(db.Model):
 
 class InventorySchema(ma.ModelSchema):
     class Meta:
-        model = Inventory
+        model = Book
         sqla_session = db.session
 
 
@@ -197,3 +159,45 @@ class OrderSchema(ma.ModelSchema):
 
 
 db.create_all()
+
+# class Book(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     name = db.Column(db.String(80))
+#     price = db.Column(db.Float)
+#     isbn = db.Column(db.Integer)
+#
+#     def add_book(_name, _price, _isbn):
+#         new_book = Book(name=_name, price=_price, isbn=_isbn)
+#         db.session.add(new_book)
+#         db.session.commit()
+#
+#     def get_all_books(self):
+#         return Book.query.all()
+#
+#     def get_book(_isbn):
+#         return Book.query.filter_by(isbn=_isbn).first()
+#
+#     def delete_book(_isbn):
+#         is_sucessful = Book.query.filter_by(isbn=_isbn).delete()
+#         db.session.commit()
+#         return bool(is_sucessful)
+#
+#     def update_book_price(_isbn, _price):
+#         book_to_update = Book.query.filter_by(isbn=_isbn).first()
+#         book_to_update.price = _price
+#         db.session.add(book_to_update)
+#         db.session.commit()
+#
+#     def update_book_name(_isbn, _name):
+#         book_to_update = Book.query.filter_by(isbn=_isbn).first()
+#         book_to_update.name = _name
+#         db.session.add(book_to_update)
+#         db.session.commit()
+#
+#     def __repr__(self):
+#         book_object = {
+#             'name': self.name,
+#             'price': self.price,
+#             'isbn': self.isbn
+#         }
+#         return json.dumps(book_object)
