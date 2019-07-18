@@ -15,7 +15,7 @@ class Book(db.Model):
     book_price = db.Column(db.Float)
     book_author = db.Column(db.String(30))
     book_isbn = db.Column(db.Integer)
-    locations = db.relationship("Inventory")
+    locations = db.relationship("Inventory  ")
 
     def add(book_name, book_price, book_author, book_isbn):
         new_book = Book(book_name=book_name, book_price=book_price, book_author=book_author, book_isbn=book_isbn)
@@ -29,14 +29,14 @@ class Book(db.Model):
         return Book.query.filter_by(book_name=name).first()
 
     def __repr__(self):
-         book_object = {
-              'id' : self.book_id,
-              'name': self.book_name,
-              'price': self.book_price,
-              'author': self.book_author,
-              'isbn': self.book_isbn
-          }
-         return json.dumps(book_object)
+        book_object = {
+            'id': self.book_id,
+            'name': self.book_name,
+            'price': self.book_price,
+            'author': self.book_author,
+            'isbn': self.book_isbn
+        }
+        return json.dumps(book_object)
 
 
 class Location(db.Model):
@@ -149,12 +149,19 @@ class Orders(db.Model):
     def place_order(user_id, book_name, qty, price, pincode):
         data = Inventory.is_available(book_name, pincode)
         new_qty = int(data.quantity) - int(qty)
-        db.session.query(Inventory).filter(Inventory.book_id == data.book_id).filter(Inventory.pincode == pincode).update({"quantity": new_qty})
+        db.session.query(Inventory).filter(Inventory.book_id == data.book_id).filter(
+            Inventory.pincode == pincode).update({"quantity": new_qty})
         new_order = Orders(user_id=user_id, book_name=book_name, qty=qty, total_amount=float(price) * float(qty),
                            date=datetime.utcnow(), pincode=pincode)
         db.session.add(new_order)
         db.session.commit()
         return True
+
+
+class BookSchema(ma.ModelSchema):
+    class Meta:
+        model = Book
+        sqla_session = db.session
 
 
 class InventorySchema(ma.ModelSchema):

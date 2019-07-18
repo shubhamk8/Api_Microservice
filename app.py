@@ -79,7 +79,7 @@ def get_book_isbn(name):
         response = Response(json.dumps(invalidBookMsg), status=404, mimetype="application/json")
         return response
     else:
-        bookSchema = InventorySchema()
+        bookSchema = BookSchema()
         response = Response(bookSchema.dumps(book).data, status=201, mimetype='application/json')
         return response
 
