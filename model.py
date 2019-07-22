@@ -1,10 +1,10 @@
+import base64
 import json
+import os
 from datetime import datetime, timedelta
+from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 from settings import *
-import os
-import base64
-from flask_login import UserMixin
 
 db = SQLAlchemy(app)
 
@@ -91,8 +91,8 @@ class User(db.Model, UserMixin):
     token_expiration = db.Column(db.DateTime)
     orders = db.relationship('Orders', backref='user', lazy='dynamic')
 
-    def user_pass_match(_username, _password):
-        user = User.query.filter_by(username=_username).filter_by(password=_password).first()
+    def user_pass_match(email, _password):
+        user = User.query.filter_by(email=email).first()
         if user is None:
             return False
         else:
@@ -117,6 +117,7 @@ class User(db.Model, UserMixin):
         self.token = base64.b64encode(os.urandom(24)).decode('utf-8')
         self.token_expiration = now + timedelta(seconds=expires_in)
         db.session.add(self)
+        db.session.commit()
         return self.token
 
     def revoke_token(self):
@@ -140,7 +141,8 @@ class Orders(db.Model):
     pincode = db.Column(db.Integer, db.ForeignKey('location.pincode'))
 
     def get_all_orders(self):
-        pass
+        orders = Orders.query.all()
+        return orders
 
     def get_order(id):
         order = Orders.query.filter_by(o_id=id).first()
