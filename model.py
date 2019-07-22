@@ -15,6 +15,7 @@ class Book(db.Model):
     book_price = db.Column(db.Float)
     book_author = db.Column(db.String(30))
     book_isbn = db.Column(db.Integer)
+    book_cover = db.Column(db.String(100))
     locations = db.relationship("Inventory  ")
 
     def add(book_name, book_price, book_author, book_isbn):

@@ -1,10 +1,10 @@
 from flask import request, Response
-from flask_login import login_user, current_user
+from flask_login import login_user, current_user, login_required, logout_user
 from api import bp
 from model import *
 from flask import jsonify
 from functools import wraps
-
+import jwt
 
 @login_manager.user_loader
 def load_user(userid):
@@ -40,6 +40,7 @@ def get_token():
 
 
 @bp.route('/user')
+@login_required
 def get_users():
     user = User.getAllUsers('self')
     user_schema = UserSchema(many=True)
@@ -64,6 +65,7 @@ def get_user(id):
 
 
 @bp.route('/user/<int:id>/orders')
+@login_required
 def get_user_orders(id):
     orders = User.get_orders(id)
     result = OrderSchema(many=True)
@@ -71,6 +73,7 @@ def get_user_orders(id):
 
 
 @bp.route('/user/<int:id>/order', methods=['post'])
+@login_required
 def place_order(id):
     data = request.get_json()
     result = Orders.place_order(id, data['book_name'], data['qty'], data['price'], data['pincode'])
@@ -82,3 +85,9 @@ def place_order(id):
         message = {"msg": "Sorry!!.. This Book is not available at your location"}
         response = Response(json.dumps(message), status=500, mimetype='application/json')
         return response
+
+
+@bp.route('/logout')
+def logout():
+    logout_user()
+    return Response('Logged Out Successfully...',status=200,mimetype='application/json')

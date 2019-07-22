@@ -12,7 +12,6 @@ def validate(bookObject):
 
 
 @bp.route('/inventory')
-@login_required
 def get_inventory():
     books = Book.get_inventory('self')
     books_schema = BookSchema(many=True)
@@ -21,6 +20,7 @@ def get_inventory():
 
 
 @bp.route('/inventory', methods=['POST'])
+@login_required
 def add_book():
     request_data = request.get_json()
     if validate(request_data):
