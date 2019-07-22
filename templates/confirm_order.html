@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}
+<title>Meraklis-- Confirm Purchase?</title>
+{% endblock %}
+
+{% block content %}
+    <section>
+        <h1 style="clear:both">Confirm Purchase of these books?</h1>
+
+        {% include "shopping_cart.html" %}
+
+            <form action="" method="post">
+                <span style="color:darkgreen" >Proceed to payment?</span>
+                <br><br>
+                <button type="submit" style="height:50px; width:250px;">Yes, proceed to payment.</button>
+                <a >
+                </a>
+                <br><br><button type="button" href="{{ url_for('buy', user=current_user?????????) }}" style="height:30px; width:250px;">No, browse the store some more.</button>
+            </form>
+        {% endblock %}
+    </section>
+
+{% block sidebar %}
+{% endblock %}

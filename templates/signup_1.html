@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% from "form_macros.html" import render_field%}
+
+{% block title %}
+
+<title>Meraklis-- {{ title }}</title>
+{% endblock %}
+
+{% block content %}
+    <section>
+        <h1 style="clear:both">{{ title }}</h1>
+        <form action="" method="POST">
+            {{ form.hidden_tag() }}
+            <table>
+                {{ render_field(form.name, size = 40) }}
+                {{ render_field(form.email, size = 40) }}
+                {{ render_field(form.MobileNumber, size = 10) }}
+                {{ render_field(form.password, size = 40) }}
+                {{ render_field(form.password2, size = 40) }}
+
+                <tr class="submit">
+                    <td></td>
+                    <td>
+                        <button type="submit">Submit</button>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </section>
+{% endblock %}
+
+{% block sidebar %}
+{% endblock %}

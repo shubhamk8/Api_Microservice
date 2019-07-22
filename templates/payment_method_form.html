@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+
+<title>Meraklis-- Enter Payment Method</title>
+{% endblock %}
+
+{% block content %}
+    <section>
+        <h1 style="clear:both">Add a Payment Method </h1>
+        <form action="" method="POST">
+            {{ form.hidden_tag() }}
+            <td>Select Mode of Payment-</td>
+            <table>
+                    {% for subfield in form.ModeOfPayment %}
+                    <tr>
+                        <td style="width:10px; padding:5px;">{{ subfield }}</td>
+                        <td>{{ subfield.label }}</td>
+                    </tr>
+                    {% endfor %}
+
+
+                <tr class="submit">
+                    <td></td>
+                    <td>
+                        <button type="submit">Submit</button>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </section>
+{% endblock %}
+
+{% block sidebar %}
+{% endblock %}

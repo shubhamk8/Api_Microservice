@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% from "form_macros.html" import render_field %}
+
+{% block title %}
+<head lang=en-US>
+    <title>Meraklis~ Log In</title>
+</head>
+{% endblock %}
+
+{% block content %}
+<section>
+    <h1 style="clear:both">Please Log In</h1>
+    <form action="" method="POST">
+        {{form.hidden_tag()}}
+        <table>
+            <td>{{ render_field(form.email, size=30) }} </td>
+            <td>{{ render_field(form.password, size=30) }} </td>
+            <td>{{ render_field(form.remember_me) }} </td>
+            <tr class="submit">
+                    <td></td>
+                    <td>
+                        <button type="submit">Submit</button>
+                    </td>
+            </tr>
+        </table>
+    </form>
+</section>
+{%endblock%}
+
+{% block sidebar %}
+{%endblock%}

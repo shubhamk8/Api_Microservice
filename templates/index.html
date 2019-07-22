@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{%block title%}
+<title xmlns="http://www.w3.org/1999/html">Welcome to Meraklis!</title>
+{%endblock%}
+
+
+{%block content%}
+<article>
+    <header>
+        <h1>Welcome to Meraklis!</h1>
+        <p>Meraklis is an online store for your favorite books.</p>
+    </header>
+    <section>
+        <h3>TEST LINKS</h3>
+        <br><a href="/templates/order_memo.html">Order Memo</a>
+        <br><a href="{{ url_for('address_form') }}">Address Form</a>
+        <br><a href="{{ url_for('obtain_paymentmode') }}">Payment Form</a><br><br>
+
+    </section>
+    <section>
+        <h3>About</h3>
+        <p>Details of Organisation
+           <br><br><br><br><br>
+        </p>
+    </section>
+    <p>
+        <h3>Contact Details</h3>
+        <p>Here are contact details of Organization.
+            <address>
+                Written by John Doe.<br>
+                Visit us at:<br>
+                Example.com<br>
+                Box 564, Disneyland<br>
+                USA
+            </address>
+        </p>
+    </p>
+    <footer>
+    </footer>
+</article>
+{%endblock%}

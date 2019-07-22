@@ -1,0 +1,60 @@
+<!--VVVVV IMP: ONLY SHOW TO LOGGED IN USERS-->
+{% extends "base.html"%}
+
+{% block title %}
+<title>Meraklis -- {{ user.name}}</title>
+{%endblock%}
+
+{% block content%}
+
+    <article>
+        <header>
+            <h1>User Profile: {{ current_user.name }}</h1>
+        </header>
+        <table class="profile">
+            <tr>
+            <td><b>Name:</b></td> <td>{{ user.name }}</td>
+            </tr>
+            <tr>
+                <td><b>E-mail:</b></td> <td>{{ user.email }}</td>
+            </tr>
+            <tr>
+                <td><b>Mobile Number:</b></td> <td>{{ user.mobilenumber }}</td>
+            </tr>
+            <tr class="editbutton">
+                <td></td> <td></td>
+                <td>
+                    <button type="button">
+                        <a href="{{ url_for('edit_user', user_id=current_user.id) }}" style="text-decoration:none;">
+                            edit
+                        </a>
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td><b>Address:</b></td> <td>{{ user.address }}</td>
+            </tr>
+            <tr class="editbutton">
+                <td></td> <td></td>
+                <td>
+                    <button type="button">
+                        <a href="{{ url_for('address_form') }}">
+                            edit
+                        </a>
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td><b>Payment Mode: </b></td> <td>{{ user.paymentmode }}</td>
+            </tr>
+            <tr class="editbutton">
+                <td></td><td></td>
+                <td><button><a href="{{ url_for('obtain_paymentmode') }}">edit</a></button></td>
+            </tr>
+
+        </table>
+    </article>
+{% endblock%}
+
+{% block sidebar %}
+{% endblock %}

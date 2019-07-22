@@ -1,0 +1,48 @@
+{% extends "base.html"%}
+
+{% block title %}
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Meraklis-- Order Memo</title>
+</head>
+{% endblock %}
+
+{% block content %}
+<!--VVVV IMP: ONLY SHOW TO PERSON WHO'S ORDERED NOBODY ELSE-->
+<h2 style="text-align:center;">Your Order</h2>
+<table class="order_memo">
+    <tr>
+        <th id="order_srno">Sr.No.</th>
+        <th>Title</th>
+         <th id="quantity">Quantity</th>
+        <th id="price">Price</th>
+        <th id="total">Total</th>
+    </tr>
+
+    <tr>
+        <td>1.</td>
+        <td><a href="{{ url_for('view_book', name='1984') }}">1984</a></td>
+        <td>4</td>
+        <td>300</td>
+        <td>1200</td>
+    </tr>
+    <tr>
+        <td>2.</td>
+        <td><a href="{{ url_for('view_book', name='Harry Potter & The Chamber of Secrets') }}">Harry Potter & The Chamber of Secrets</a></td>
+        <td>1</td>
+        <td>600</td>
+        <td>600</td>
+    </tr>
+
+    <tr id="LastRow">
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td style="border: 1px solid black;"><b>1800</b></td>
+    </tr>
+</table>
+{% endblock %}
+
+{% block sidebar %}
+{% endblock %}

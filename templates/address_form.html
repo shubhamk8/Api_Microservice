@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% from "form_macros.html" import render_field%}
+
+{% block title %}
+
+<title>Meraklis-- Enter Address</title>
+{% endblock %}
+
+{% block content %}
+    <section>
+        <h1 style="clear:both">Please enter delivery address- </h1>
+        <form action="" method="POST">
+            {{ form.hidden_tag() }}
+            <table>
+                {{ render_field(form.HouseNumber, size = 10) }}
+                {{ render_field(form.SocietyName, size = 40) }}
+                {{ render_field(form.Area, size = 40) }}
+                {{ render_field(form.City, size = 40) }}
+                {{ render_field(form.Pincode, size = 6) }}
+                {{ render_field(form.State, size = 40) }}
+
+                <tr class="submit">
+                    <td></td>
+                    <td>
+                        <button type="submit">Submit</button>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </section>
+{% endblock %}
+
+{% block sidebar %}
+{% endblock %}

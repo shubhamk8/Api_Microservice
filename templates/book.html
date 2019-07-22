@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title%}
+<title>Meraklis-- {{ title }}</title>
+{% endblock %}
+
+{% block content %}
+<div class="book">
+
+    <div class="info">
+        <span class="bookcover">
+            <img src="../static/img/1984_bookcover.jpg" alt="BookCover" style="margin: auto; width:90%; float:left;">
+        </span>
+        <h3>{{ title }}<br></h3><h4>{{ author }}</h4>
+        <br>ISBN: {{ isbn }} <br> Price: Rs. {{ price }}/-
+
+            </div>
+        </div>
+{% endblock %}
+
+{% block sidebar %}
+{% endblock %}
