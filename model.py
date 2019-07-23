@@ -9,33 +9,55 @@ from settings import *
 db = SQLAlchemy(app)
 
 
-class Book(db.Model):
+class PaginatedAPIMixin(object):
+    @staticmethod
+    def to_collection(query, page, per_page, endpoint, **kwargs):
+        resources = query.paginate(page, per_page, False) #WHAT IS FALSE - an error flag- when an out of range page is requested
+                                                          # If True, a 404 error will be automatically returned to the client.
+                                                          # If False, an empty list will be returned for out of range pages.
+        data = {
+            'items':[item.to_dict() for item in resources.items],
+            '_meta': {
+                'page': page,
+                'per_page': per_page,
+                'total_pages':resources.pages,
+                'total_items':resources.total
+            },
+            '_links': {
+                'self': url_for(endpoint, page=page, per_page=per_page, **kwargs),
+                'next': url_for(endpoint, page=page + 1, per_page=per_page, **kwargs),
+                'prev': url_for(endpoint, page= page - 1, per_page=per_page, **kwargs)
+            }
+        }
+        return data
+
+class Book(db.Model, PaginatedAPIMixin):
     book_id = db.Column(db.Integer, primary_key=True)
-    book_name = db.Column(db.String(30))
-    book_price = db.Column(db.Float)
-    book_author = db.Column(db.String(30))
-    book_isbn = db.Column(db.Integer)
-    book_cover = db.Column(db.String(100))
+    title = db.Column(db.String(30))
+    price = db.Column(db.Float)
+    author = db.Column(db.String(30))
+    isbn = db.Column(db.Integer)
+    imgsrc = db.Column(db.String)
     locations = db.relationship("Inventory  ")
 
     def add(book_name, book_price, book_author, book_isbn):
-        new_book = Book(book_name=book_name, book_price=book_price, book_author=book_author, book_isbn=book_isbn)
+        new_book = Book(title=book_name, price=book_price, author=book_author, isbn=book_isbn)
         db.session.add(new_book)
         db.session.commit()
 
     def get_inventory(self):
         return Book.query.all()
 
-    def get_book(name):
-        return Book.query.filter_by(book_name=name).first()
+    def get_book(title):
+        return Book.query.filter_by(title=title).first()
 
     def __repr__(self):
         book_object = {
             'id': self.book_id,
-            'name': self.book_name,
-            'price': self.book_price,
-            'author': self.book_author,
-            'isbn': self.book_isbn
+            'title': self.title,
+            'price': self.price,
+            'author': self.author,
+            'isbn': self.isbn
         }
         return json.dumps(book_object)
 
@@ -64,8 +86,8 @@ class Inventory(db.Model):
     pincode = db.Column(db.Integer, db.ForeignKey('location.pincode'))
     quantity = db.Column(db.Integer)
 
-    def is_available(book_name, pincode):
-        result = db.session.query(Inventory.quantity, Inventory.book_id).filter(Book.book_name == book_name).filter(
+    def is_available(title, pincode):
+        result = db.session.query(Inventory.quantity, Inventory.book_id).filter(Book.title == title).filter(
             Location.pincode == pincode).filter(Book.book_id == Inventory.book_id).filter(
             Location.pincode == Inventory.pincode).first()
         return result
@@ -81,13 +103,14 @@ class Inventory(db.Model):
 
 
 class User(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     email = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
     mobile_no = db.Column(db.Integer)
     address = db.Column(db.Text)
     pincode = db.Column(db.Integer, db.ForeignKey('location.pincode'))
+    ModeOfPayment = db.Column(db.String)
     token = db.Column(db.String(50), index=True, unique=True)
     token_expiration = db.Column(db.DateTime)
     orders = db.relationship('Orders', backref='user', lazy='dynamic')
@@ -106,8 +129,8 @@ class User(db.Model, UserMixin):
         orders = Orders.query.filter_by(user_id=id).order_by(Orders.o_id).all()
         return orders
 
-    def createUser(_username, _password):
-        new_user = User(username=_username, password_hash=_password)
+    def createUser(_name, _password):
+        new_user = User(name=_name, password_hash=_password)
         db.session.add(new_user)
         db.session.commit()
 
@@ -149,12 +172,12 @@ class Orders(db.Model):
         order = Orders.query.filter_by(o_id=id).first()
         return order
 
-    def place_order(user_id, book_name, qty, price, pincode):
-        data = Inventory.is_available(book_name, pincode)
+    def place_order(user_id, title, qty, price, pincode):
+        data = Inventory.is_available(title, pincode)
         new_qty = int(data.quantity) - int(qty)
         db.session.query(Inventory).filter(Inventory.book_id == data.book_id).filter(
             Inventory.pincode == pincode).update({"quantity": new_qty})
-        new_order = Orders(user_id=user_id, book_name=book_name, qty=qty, total_amount=float(price) * float(qty),
+        new_order = Orders(user_id=user_id, title=title, qty=qty, total_amount=float(price) * float(qty),
                            date=datetime.utcnow(), pincode=pincode)
         db.session.add(new_order)
         db.session.commit()
