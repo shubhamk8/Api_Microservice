@@ -40,8 +40,8 @@ class Book(db.Model, PaginatedAPIMixin):
     imgsrc = db.Column(db.String)
     locations = db.relationship("Inventory  ")
 
-    def add(book_name, book_price, book_author, book_isbn):
-        new_book = Book(title=book_name, price=book_price, author=book_author, isbn=book_isbn)
+    def add(title, price, author, isbn, imgsrc):
+        new_book = Book(title=title, price=price, author=author, isbn=isbn, imgsrc=imgsrc)
         db.session.add(new_book)
         db.session.commit()
 
