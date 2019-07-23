@@ -15,6 +15,29 @@
     <link rel="stylesheet" href="../static/css/main.css">
 
     <script src="../static/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+
+    <script src="//dcs.netbiscuits.net/ds/detect/js/account/mksssscumminscollegeofengineering/profile/default/jsprofile/mytoken/token/7ab200dce5a4d551"></script>
+    <script>
+        /* DCS INIT START */
+        var dcs = dcs || undefined;
+        if (dcs !== undefined) {
+            dcs.dynamic.init({
+                callback: customCallback,
+                benchmark : true, profilediff : true
+            });
+        }
+        /* DCS INIT END */
+
+        /* CUSTOM CALLBACK START */
+        function customCallback() {
+            // create a custom callback function here, if you need it
+        }
+        /* CUSTOM CALLBACK END */
+    </script>
+
+    <noscript>
+         <img src="//dcs.netbiscuits.net/ds/analytics/log/fallback/account/mksssscumminscollegeofengineering/token/7ab200dce5a4d551"/>
+    </noscript>
 </head>
 
 <body>
@@ -43,7 +66,15 @@
     <div class="main-container">
         <div class="main wrapper clearfix">
             <article class='flashes'>
-
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                    <ul>
+                        {% for message in messages %}
+                        <li> {{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                {% endwith %}
             </article>
 
 

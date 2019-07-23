@@ -3,6 +3,22 @@
 {% block title %}
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        #annoying a{
+        float:right;
+        padding:10px 30px;
+        margin:20px 0;
+
+        text-decoration: none;
+        background-color:navy;
+        color:white;
+        }
+
+        #annoying a:hover{
+        color: red;
+        font-weight: bold;
+        }
+    </style>
     <title>Meraklis-- Order Memo</title>
 </head>
 {% endblock %}
@@ -21,14 +37,14 @@
 
     <tr>
         <td>1.</td>
-        <td><a href="{{ url_for('view_book', name='1984') }}">1984</a></td>
+        <td><a href="{{ url_for('view_book', title='1984') }}" style="color:black; text-decoration:none;">1984</a></td>
         <td>4</td>
         <td>300</td>
         <td>1200</td>
     </tr>
     <tr>
         <td>2.</td>
-        <td><a href="{{ url_for('view_book', name='Harry Potter & The Chamber of Secrets') }}">Harry Potter & The Chamber of Secrets</a></td>
+        <td><a href="{{ url_for('view_book', title='Harry Potter & The Chamber of Secrets') }}" style="color:black; text-decoration:none;">Harry Potter & The Chamber of Secrets</a></td>
         <td>1</td>
         <td>600</td>
         <td>600</td>
@@ -45,4 +61,9 @@
 {% endblock %}
 
 {% block sidebar %}
+<span id="annoying">
+    <a href="{{ url_for('place_order_demo') }}">
+        ORDER
+    </a>
+</span>
 {% endblock %}
