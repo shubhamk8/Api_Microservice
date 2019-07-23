@@ -157,7 +157,7 @@ class User(db.Model, UserMixin):
 
 class Orders(db.Model):
     o_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
     book_name = db.Column(db.String, nullable=False)
     qty = db.Column(db.Integer)
     total_amount = db.Column(db.Float, nullable=False)
