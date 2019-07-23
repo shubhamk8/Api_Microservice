@@ -24,7 +24,7 @@ def get_inventory():
 def add_book():
     request_data = request.get_json()
     if validate(request_data):
-        Book.add(request_data['title'], request_data['price'], request_data['author'], request_data['isbn'])
+        Book.add(request_data['title'], request_data['price'], request_data['author'], request_data['isbn'], request_data['imgsrc'])
         resp = Response("", status=201, mimetype='application/json')
         resp.headers['Location'] = "/inventory/" + str(request_data['title'])
         return resp
