@@ -3,6 +3,7 @@ from flask_login import login_user, logout_user, current_user, login_required
 
 from settings import app, login_manager
 from app import *
+from api import * #needed or not?
 from model import User, Book, db
 from auth_forms import LoginForm, SignupForm, EditUserForm, AddressForm, PaymentForm
 
