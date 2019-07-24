@@ -1,0 +1,13 @@
+import os
+os.system("pip install flask")
+os.system("pip install jinja2")
+os.system("pip install werkzeug")
+os.system("pip install flask-sqlalchemy")
+os.system("pip install flask-login")
+os.system("pip install flask-wtf")
+os.system("pip install wtforms")
+os.system("pip install flask-jwt")
+os.system("pip install flask-jwt-extended")
+os.system("pip install flask-marshmallow")
+os.system("pip install flask-restful")
+os.system("pip install flask-httpauth")
