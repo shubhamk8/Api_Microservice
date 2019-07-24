@@ -109,6 +109,14 @@ def add_to_cart():
     return Response('', status=201, mimetype='application/json')
 
 
+@bp.route('/user/cart',methods=['delete'])
+@login_required
+def delete_from_cart():
+    data = request.get_json()
+    res = Cart.delete_from_cart(data['book_name'], current_user.id)
+    return Response('', status=200, mimetype='application/json')
+
+
 @bp.route('/user/cart/order')
 @login_required
 def order_cart():

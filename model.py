@@ -176,8 +176,8 @@ class Cart(db.Model):
         db.session.add(cart)
         db.session.commit()
 
-    def delete_from_cart(book_id,user_id):
-        Cart.query.filer_by(Cart.book_id == book_id).filter_by(Cart.user_id == user_id).delete()
+    def delete_from_cart(book_name, user_id):
+        Cart.query.filer_by(Cart.book_name == book_name).filter_by(Cart.user_id == user_id).delete()
         db.session.commit()
 
     def view_cart(user_id):
@@ -194,20 +194,6 @@ class Cart(db.Model):
             order = Orders(user_id=item.user_id, book_name=item.book_name, qty=item.quantity, total_amount=item.cart_total,date=datetime.utcnow(), pincode=usr.pincode)
             db.session.add(order)
             db.session.commit()
-
-
-
-
-
-
-    # def __repr__(self):
-    #     cart_object = {
-    #         'user_id': self.user_id,
-    #         'book_name': self.book_name,
-    #         'quantity': self.quantity,
-    #         'cart_total': self.cart_total
-    #     }
-    #     return cart_object
 
 
 class BookSchema(ma.ModelSchema):
