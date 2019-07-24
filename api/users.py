@@ -6,6 +6,7 @@ from flask import jsonify
 from functools import wraps
 import jwt
 
+
 @login_manager.user_loader
 def load_user(userid):
     return User.query.get(int(userid))
@@ -64,19 +65,19 @@ def get_user(id):
     return response
 
 
-@bp.route('/user/<int:id>/orders')
+@bp.route('/user/orders')
 @login_required
-def get_user_orders(id):
-    orders = User.get_orders(id)
+def get_user_orders():
+    orders = User.get_orders(current_user.id)
     result = OrderSchema(many=True)
     return Response(result.dumps(orders).data, status=201, mimetype='application/json')
 
 
-@bp.route('/user/<int:id>/order', methods=['post'])
+@bp.route('/user/order', methods=['post'])
 @login_required
-def place_order(id):
+def place_order():
     data = request.get_json()
-    result = Orders.place_order(id, data['book_name'], data['qty'], data['price'], data['pincode'])
+    result = Orders.place_order(current_user.id, data['book_name'], data['qty'], data['price'], data['pincode'])
     if result is True:
         message = {"msg": "Order Placed Successfully "}
         response = Response(json.dumps(message), status=201, mimetype='application/json')
@@ -86,8 +87,35 @@ def place_order(id):
         response = Response(json.dumps(message), status=500, mimetype='application/json')
         return response
 
+@bp.route('/user/cart')
+@login_required
+def view_cart():
+    cart = Cart.view_cart(current_user.id)
+    if cart is not None:
+        response = Response(cart, status=200, mimetype='application/json')
+        return response
+    else:
+        message = {
+            "msg":"Your Cart Is Empty!!"
+        }
+        return Response(json.dumps(message), status=200, mimetype='application/json')
+
+
+@bp.route('/user/cart', methods=['post'])
+@login_required
+def add_to_cart():
+    data = request.get_json()
+    cart = Cart.add_to_cart(current_user.id, data['book_name'], data['quantity'])
+    return Response('', status=201, mimetype='application/json')
+
+
+@bp.route('/user/cart/order')
+@login_required
+def order_cart():
+    Cart.cart_order(current_user.id)
+    return Response('',status=201,mimetype='application/json')
 
 @bp.route('/logout')
 def logout():
     logout_user()
-    return Response('Logged Out Successfully...',status=200,mimetype='application/json')
+    return Response('Logged Out Successfully...', status=200, mimetype='application/json')

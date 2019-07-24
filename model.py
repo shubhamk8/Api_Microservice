@@ -91,6 +91,7 @@ class User(db.Model, UserMixin):
     token = db.Column(db.String(50), index=True, unique=True)
     token_expiration = db.Column(db.DateTime)
     orders = db.relationship('Orders', backref='user', lazy='dynamic')
+    cart = db.relationship('Cart', backref='user', lazy='dynamic')
 
     def user_pass_match(email, _password):
         user = User.query.filter_by(email=email).first()
@@ -161,6 +162,54 @@ class Orders(db.Model):
         return True
 
 
+class Cart(db.Model):
+    cart_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.ForeignKey('user.id'), nullable=False)
+    book_name = db.Column(db.String)
+    quantity = db.Column(db.Integer)
+    cart_total = db.Column(db.Float)
+
+    def add_to_cart(user_id,book_name,quantity):
+        price = db.session.query(Book.book_price).filter(Book.book_name == book_name).first()
+        cart_tot = float(price[0])*int(quantity)
+        cart = Cart(user_id=user_id, book_name=book_name, quantity=quantity, cart_total=cart_tot)
+        db.session.add(cart)
+        db.session.commit()
+
+    def delete_from_cart(book_id,user_id):
+        Cart.query.filer_by(Cart.book_id == book_id).filter_by(Cart.user_id == user_id).delete()
+        db.session.commit()
+
+    def view_cart(user_id):
+        cart = Cart.query.filter(Cart.user_id == user_id).all()
+        if len(cart) is 0:
+            return None
+        res = CartSchema(many=True)
+        return res.dumps(cart).data
+
+    def cart_order(user_id):
+        items = db.session.query(Cart).filter(Cart.user_id == user_id).all()
+        for item in items:
+            usr = db.session.query(User.pincode).filter(User.id == item.user_id).first()
+            order = Orders(user_id=item.user_id, book_name=item.book_name, qty=item.quantity, total_amount=item.cart_total,date=datetime.utcnow(), pincode=usr.pincode)
+            db.session.add(order)
+            db.session.commit()
+
+
+
+
+
+
+    # def __repr__(self):
+    #     cart_object = {
+    #         'user_id': self.user_id,
+    #         'book_name': self.book_name,
+    #         'quantity': self.quantity,
+    #         'cart_total': self.cart_total
+    #     }
+    #     return cart_object
+
+
 class BookSchema(ma.ModelSchema):
     class Meta:
         model = Book
@@ -191,8 +240,14 @@ class OrderSchema(ma.ModelSchema):
         sqla_session = db.session
 
 
-db.create_all()
+class CartSchema(ma.ModelSchema):
+    class Meta:
+        model = Cart
+        sqla_session = db.session
 
+
+db.create_all()
+Cart.view_cart(1)
 # class Book(db.Model):
 #     id = db.Column(db.Integer, primary_key=True)
 #     name = db.Column(db.String(80))
