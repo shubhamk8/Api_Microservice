@@ -1,22 +1,15 @@
-{% extends "base.html" %}
-
-{% block title%}
-<title>Meraklis-- {{ title }}</title>
-{% endblock %}
-
-{% block content %}
 <div class="book">
 
     <div class="info">
         <span class="bookcover">
-            <img src="../static/img/1984_bookcover.jpg" alt="BookCover" style="margin: auto; width:90%; float:left;">
+            <img src="{{ book['imgsrc'] }}" alt="BookCover" style="height:auto ; width:150px; margin: 10px; padding: 0 5px 0 0; float:left;">
         </span>
-        <h3>{{ title }}<br></h3><h4>{{ author }}</h4>
-        <br>ISBN: {{ isbn }} <br> Price: Rs. {{ price }}/-
 
-            </div>
-        </div>
-{% endblock %}
+        <span class="info" style="margin:10px; padding: 0 5px;">
 
-{% block sidebar %}
-{% endblock %}
+        <h3><a href="{{ url_for('view_book', title=book['title']) }}">{{ book["title"] }}</a> </h3>
+        <h4>{{ book["author"] }}</h4>
+        <br>ISBN: {{ book["isbn"] }} <br> Price: Rs. {{ book["price"] }}/-
+        </span>
+    </div>
+</div>

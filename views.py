@@ -2,18 +2,32 @@ from flask import render_template, url_for, flash, redirect, request
 from flask_login import login_user, logout_user, current_user, login_required
 
 from settings import app, login_manager
-from model import User, Inventory, db
-from auth_forms import LoginForm, SignupForm, AddressForm, PaymentForm
+from app import *
+from api import * #needed or not?
+from model import User, Book, db
+from auth_forms import LoginForm, SignupForm, EditUserForm, AddressForm, PaymentForm
+
+import json
 
 
-# @login_manager.user_loader
-# def load_user(userid):
-#    return User.query.get(int(userid))
 
-@app.route('/templates/order_memo.html')
+#DEMO FUNCTIONS
+
+@app.route('/')
+def index():
+    # with open('books_inventory.json') as books_json:
+    #    books = json.load(books_json)
+    books = json.loads(get_inventory().data)
+    return render_template('index.html', books=books)
+
+
+@app.route('/order-memo')
 def orderMemo():
     return render_template("order_memo.html")
 
+@app.route('/confirm-order-demo#')
+def place_order_demo():
+    return render_template("confirm_order.html")
 
 @app.route('/templates/address_form.html', methods=["GET", "POST"])
 @login_required
@@ -28,20 +42,23 @@ def address_form():
         return redirect(url_for('index'))
     return render_template("address_form.html", form=form)
 
+@app.route('/book/<title>')
+def view_book(title):
+    with open('books_inventory.json') as books_json:
+        books_list = json.load(books_json)
+        for book in books_list:
+            if book['title'] == title:
+                book = book
+                break
+    return render_template("view_book.html", book=book)
 
-@app.route('/book/<name>')
-def view_book(name):
-    book = Inventory.query.filter_by(book_name=name).first()
-    return render_template("book.html", title=book.book_name, author=book.book_author, isbn=book.book_isbn,
-                           price=book.book_price)
 
-
-@app.route('/signup/add-payment-mode')
+@app.route('/add-payment-mode')
 def obtain_paymentmode():
     form = PaymentForm()
     if form.validate_on_submit():
         user = current_user
-        user.paymentmode = form.ModeOfPayment.data
+        user.ModeOfPayment = form.ModeOfPayment.data
         db.session.add(user)
         db.session.commit()
         flash('Payment Mode added successfully')
@@ -59,17 +76,12 @@ def user(user_id):
     return render_template('user.html', user=user)
 
 
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        if user is not None:  # and user.check_password(form.password.data)
+        if user is not None: #and user.check_password(form.password.data)
             login_user(user, form.remember_me.data)
             flash("Logged in successfully as {}.".format(user.name))
             return redirect(request.args.get('next') or url_for('index'))
@@ -88,7 +100,7 @@ def logout():
 def signup():
     form = SignupForm()
     if form.validate_on_submit():
-        user = User(name=form.name.data, email=form.email.data, mobilenumber=form.MobileNumber.data,
+        user = User(name=form.name.data, email=form.email.data, mobile_no=form.mobile_no.data,
                     password=form.password.data)
         db.session.add(user)
         db.session.commit()
@@ -101,7 +113,7 @@ def signup():
 @login_required
 def edit_user(user_id):
     user = User.query.get_or_404(user_id)
-    form = SignupForm(obj=user)
+    form = EditUserForm(obj=user)
     if form.validate_on_submit():
         form.populate_obj(user)
         db.session.commit()
@@ -130,3 +142,7 @@ def page_not_found(e):
 @app.errorhandler(500)
 def internal_server_error(e):
     return render_template('500.html'), 500
+
+
+if __name__ == '__main__':
+    app.run(debug=True)

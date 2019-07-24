@@ -12,13 +12,21 @@
         <p>Meraklis is an online store for your favorite books.</p>
     </header>
     <section>
-        <h3>TEST LINKS</h3>
-        <br><a href="/templates/order_memo.html">Order Memo</a>
-        <br><a href="{{ url_for('address_form') }}">Address Form</a>
-        <br><a href="{{ url_for('obtain_paymentmode') }}">Payment Form</a><br><br>
-
+        <h2>Browse our collection!</h2>
+        <div>
+            {% for book in books %}
+                {% include "book.html" %}
+            {% endfor %}
+        </div>
+        <div class="pagination" style="float:right;">
+            <a href="#">&laquo prev</a>
+            <a href="#" class="active">this</a>
+            <a href="#">next &raquo;</a>
+        </div>
     </section>
+
     <section>
+        <br>
         <h3>About</h3>
         <p>Details of Organisation
            <br><br><br><br><br>

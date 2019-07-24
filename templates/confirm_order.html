@@ -1,25 +1,21 @@
-{% extends "base.html" %}
+
+{% extends "order_memo.html" %}
 
 {% block title %}
 <title>Meraklis-- Confirm Purchase?</title>
 {% endblock %}
 
-{% block content %}
-    <section>
-        <h1 style="clear:both">Confirm Purchase of these books?</h1>
-
-        {% include "shopping_cart.html" %}
-
-            <form action="" method="post">
-                <span style="color:darkgreen" >Proceed to payment?</span>
-                <br><br>
-                <button type="submit" style="height:50px; width:250px;">Yes, proceed to payment.</button>
-                <a >
-                </a>
-                <br><br><button type="button" href="{{ url_for('buy', user=current_user?????????) }}" style="height:30px; width:250px;">No, browse the store some more.</button>
-            </form>
-        {% endblock %}
-    </section>
-
 {% block sidebar %}
+    <section style="margin-left:150px;">
+        <h3 style="clear:both; text-color:black;">Confirm Purchase of these books?</h3>
+            <form action="" method="post">
+                <span style="color:darkgreen; display:inline-block;"><b>Proceed to payment?</b></span>
+                <button type="submit" style="height:50px; width:auto; background-color: gold;">
+                    <a href="{{ url_for('obtain_paymentmode') }}" style="text-decoration:none;"><b>YES</b>, proceed to payment.</a>
+                </button>
+                <button type="button" style="height:50px; width:auto;">
+                    <a href="{{ url_for('index') }}" style="text-decoration:none;"><b>NO</b>, browse the store some more.</a>
+                </button>
+            </form>
+    </section>
 {% endblock %}

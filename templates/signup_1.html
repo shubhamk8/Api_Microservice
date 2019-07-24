@@ -12,11 +12,11 @@
         <form action="" method="POST">
             {{ form.hidden_tag() }}
             <table>
-                {{ render_field(form.name, size = 40) }}
-                {{ render_field(form.email, size = 40) }}
-                {{ render_field(form.MobileNumber, size = 10) }}
-                {{ render_field(form.password, size = 40) }}
-                {{ render_field(form.password2, size = 40) }}
+                {{ render_field(form.name, size = 20) }}
+                {{ render_field(form.email, size = 25) }}
+                {{ render_field(form.mobile_no, size = 15) }}
+                {{ render_field(form.password, size = 20) }}
+                {{ render_field(form.password2, size = 20) }}
 
                 <tr class="submit">
                     <td></td>

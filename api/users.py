@@ -25,12 +25,12 @@ def token_required(f):
     return wrapper
 
 
-@bp.route('/login', methods=['POST'])
+@bp.route('/login_token', methods=['POST'])
 def get_token():
     request_data = request.get_json()
-    username = str(request_data['username'])
+    email = str(request_data['email'])
     password = str(request_data['password'])
-    user = User.user_pass_match(username, password)
+    user = User.user_pass_match(email, password)
     if user is not None:
         login_user(user, remember=False)
         expiration_date = datetime.utcnow() + timedelta(seconds=3600)
@@ -52,7 +52,7 @@ def get_users():
 @bp.route('/user', methods=['POST'])
 def add_user():
     request_data = request.get_json()
-    new_user = User.createUser(request_data['username'], request_data['password'])
+    new_user = User.createUser(request_data['email'], request_data['password'])
     db.session.add(new_user)
     db.session.commit()
 
@@ -79,11 +79,11 @@ def place_order():
     data = request.get_json()
     result = Orders.place_order(current_user.id, data['book_name'], data['qty'], data['price'], data['pincode'])
     if result is True:
-        message = {"msg": "Order Placed Successfully "}
+        message = {"msg": "Order Placed Successfully! "}
         response = Response(json.dumps(message), status=201, mimetype='application/json')
         return response
     else:
-        message = {"msg": "Sorry!!.. This Book is not available at your location"}
+        message = {"msg": "Sorry! This Book is currently not available at your location."}
         response = Response(json.dumps(message), status=500, mimetype='application/json')
         return response
 

@@ -11,20 +11,20 @@ class LoginForm(Form):
     remember_me = BooleanField('Keep me checked in ')
 
 
-class SignupForm(Form):
+class EditUserForm(Form):
     name = StringField('Name : ', validators=[DataRequired(), Regexp('[A-Za-z ]', message="Name can only contain letters.")])
     email = StringField('Email ID : ', validators=[DataRequired(), Length(5, 120), Email()])
-    MobileNumber = StringField('Mobile Number : ', validators=[DataRequired(), Length(10), Regexp('[0-9]')])
+    mobile_no = StringField('Mobile Number : ', validators=[DataRequired(), Length(10), Regexp('[0-9]')])
     password = PasswordField('Password : ', validators = [DataRequired(), EqualTo('password2', message="Passwords must match.")])
     password2 = PasswordField('Confirm Password : ', validators=[DataRequired()])
 
-
+class SignupForm(EditUserForm):
     def validate_email(self, email_field):
         if User.query.filter_by(email=email_field.data).first():
             raise ValidationError('This email ID is already registered.')
 
     def validate_mobilenumber(self, mobilenumber_field):
-        if User.query.filter_by(username=mobilenumber_field.data).first():
+        if User.query.filter_by(mobile_no=mobilenumber_field.data).first():
             raise ValidationError('Mobile number is already registered.')
 
 class AddressForm(Form):

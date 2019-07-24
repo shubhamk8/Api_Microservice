@@ -1,0 +1,542 @@
+/*! HTML5 Boilerplate v5.0 | MIT License | http://h5bp.com/ */
+
+html {
+    color: #222;
+    font-size: 1em;
+    line-height: 1.4;
+}
+
+::-moz-selection {
+    background: #ffffff;
+    text-shadow: none;
+}
+
+::selection {
+    background: #b3d4fc;
+    text-shadow: none;
+}
+
+hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 1em 0;
+    padding: 0;
+}
+
+audio,
+canvas,
+iframe,
+img,
+svg,
+video {
+    vertical-align: middle;
+}
+
+fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+textarea {
+    resize: vertical;
+}
+
+.browserupgrade {
+    margin: 0.2em 0;
+    background: #ccc;
+    color: #000;
+    padding: 0.2em 0;
+}
+
+
+body {
+    font: 16px/26px Helvetica, Helvetica Neue, Times New Roman;
+}
+
+.wrapper {
+    width: 90%;
+    margin: 0 5%;
+}
+
+/* ===================
+    ALL: Theme
+   =================== */
+
+.header-container {
+    position: -webkit-sticky; /* Safari */
+    position: sticky;
+    top: 0;
+    border-bottom: 10px solid AliceBlue;
+}
+
+.footer-container,
+.main aside {
+    border-top: 10px solid AliceBlue;
+}
+
+.header-container,
+.footer-container,
+.main aside {
+    background: PowderBlue;
+}
+
+.title {
+    font-family: "Trebuchet MS", Calibri;
+    color: Coral;
+    text-shadow: -2px 1px black;
+    padding: 20px;
+}
+
+/* ==============
+    MOBILE: Menu
+   ============== */
+
+nav ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+nav a,
+nav a:visited  {
+    display: block;
+    margin-bottom: 10px;
+    padding: 15px 0;
+    text-align: center;
+    text-decoration: none;
+    font-weight: bold;
+
+    color: black;
+    background: FloralWhite;
+}
+
+nav a:hover
+{
+    color: white;
+    background:  Coral;
+    text-decoration: underline;
+}
+
+/* ==============
+    MOBILE: Main
+   ============== */
+
+.main {
+    padding: 30px 0;
+}
+
+.main article h1 {
+    font-size: 2em;
+}
+
+.main aside {
+    /*color: white;*/
+    padding: 0px 5% 10px;
+}
+
+.footer-container footer {
+    color: white;
+    padding: 20px 0;
+}
+
+/* ===============
+    ALL: IE Fixes
+   =============== */
+
+.ie7 .title {
+    padding-top: 20px;
+}
+
+/* ==========================================================================
+   Author's custom styles
+   ========================================================================== */
+
+    /*Link Styling*/
+    a,
+    a:visited {
+        color:#1E5373;
+    }
+
+    a:hover, aside a:hover, aside a:visited:hover {
+        color: #D39447
+    }
+
+    aside a:hover {
+        color: #F5BB73;
+    }
+
+    aside a: visited{
+        color: #D39447
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        color: #1E5373
+    }
+
+    .main aside h3,
+    footer h3,
+    footer a,
+    footer a:visited {
+        color: #1E5373;
+    }
+
+    footer.wrapper p{
+        color: Black;
+    }
+
+   /*Flashes Styling*/
+    .flashes ul{
+        margin:0 0;
+        background: #b3d4fc;
+        color: #000;
+
+        list-style-type: none;
+        list-style: none;
+    }
+
+    .flashes ul{
+        background: #b3d4fc;
+        color: #000;
+    }
+
+    article.flashes{
+        margin-bottom: 1em;
+    }
+
+.error, .error input{
+    color: red;
+}
+
+tr.error td ul{
+    margin-top:0;
+}
+
+tr.submit button{
+    margin-top: 20px;
+}
+
+input, button{
+    margin-left: 10px;
+}
+
+
+/* BOOK LIST STYLING */
+ul.book {
+    list-style: none none;
+    padding-left: 20px;
+}
+
+.book{
+    border-bottom: 1px solid Teal;
+    padding: 1em 0;
+    margin: 30px;
+    overflow: auto;
+}
+
+
+a.header{
+    color: #326786;
+    text-decoration: none;
+    display: block;
+}
+
+.title{
+    margin: 0 5px;
+}
+
+.author{
+    margin: 0 0;
+}
+
+
+.info{
+    font-size: .95em;
+    color: #000;
+    margin: 10px;
+    padding: 0 10px;
+}
+
+.order_memo body{
+            font-family: "Trebuchet MS", Calibri, Ariel, sans-serif;
+            text-align:center;
+            color:black;
+        }
+
+.order_memo{
+                width: 75%;
+                border-collapse: collapse;
+                margin: auto;
+                empty-cells:hide;
+                text-align: center;
+}
+
+.order_memo th {
+                padding-top: 12px;
+                padding-bottom: 12px;
+                text-align: center;
+                background-color: #00004d;
+                color: white;
+}
+
+.order_memo td, th {
+                border-bottom: 1px solid #ddd;
+                border-right: 1px solid #ddd;
+                padding: 8px;
+}
+
+.order_memo tr:nth-child(even){
+    background-color: #f2f2f2;
+}
+
+
+.order_memo #quantity{
+                width: 10%;
+}
+
+.order_memo #title{
+                width: 50%;
+}
+
+.order_memo #order_srno{
+                width: 5%;
+}
+
+.order_memo #LastRow{
+                border: 2px solid #000;
+                background-color: #ccccff;
+}
+
+
+
+
+
+.profile{
+        width: auto;
+        margin: auto;
+}
+
+.profile td{
+        padding:10px;
+}
+
+.editbutton a, a:visited{
+    text-decoration:none;
+    padding: 10px;
+}
+
+.editbutton{
+    margin: 3px;
+    border-bottom: 1px solid #1E5373;
+}
+
+.user td{
+        padding:5px;
+}
+
+
+/* ==========================================================================
+   Media Queries
+   ========================================================================== */
+
+@media only screen and (min-width: 480px) {
+
+/* ====================
+    INTERMEDIATE: Menu
+   ==================== */
+
+    nav a {
+        float: left;
+        width: 27%;
+        margin: 0 1.7%;
+        padding: 25px 2%;
+        margin-bottom: 0;
+    }
+
+    nav li:first-child a {
+        margin-left: 0;
+    }
+
+    nav li:last-child a {
+        margin-right: 0;
+    }
+
+/* ========================
+    INTERMEDIATE: IE Fixes
+   ======================== */
+
+    nav ul li {
+        display: inline;
+    }
+
+    .oldie nav a {
+        margin: 0 0.7%;
+    }
+}
+
+@media only screen and (min-width: 768px) {
+
+/* ====================
+    WIDE: CSS3 Effects
+   ==================== */
+
+    .header-container,
+    .main aside {
+        -webkit-box-shadow: 0 5px 10px #aaa;
+           -moz-box-shadow: 0 5px 10px #aaa;
+                box-shadow: 0 5px 10px #aaa;
+    }
+
+/* ============
+    WIDE: Menu
+   ============ */
+
+    .title {
+        float: left;
+    }
+
+    nav {
+        float: right;
+        width: 38%;
+    }
+
+/* ============
+    WIDE: Main
+   ============ */
+
+    .main article {
+        float: left;
+        width: 57%;
+    }
+
+    .main aside {
+        float: right;
+        width: 28%;
+    }
+}
+
+@media only screen and (min-width: 1140px) {
+
+/* ===============
+    Maximal Width
+   =============== */
+
+    .wrapper {
+        width: 1026px; /* 1140px - 10% for margins */
+        margin: 0 auto;
+    }
+}
+
+/* ==========================================================================
+   Helper classes
+   ========================================================================== */
+
+.hidden {
+    display: none !important;
+    visibility: hidden;
+}
+
+.visuallyhidden {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+
+.visuallyhidden.focusable:active,
+.visuallyhidden.focusable:focus {
+    clip: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    position: static;
+    width: auto;
+}
+
+.invisible {
+    visibility: hidden;
+}
+
+.clearfix:before,
+.clearfix:after {
+    content: " ";
+    display: table;
+}
+
+.clearfix:after {
+    clear: both;
+}
+
+.clearfix {
+    *zoom: 1;
+}
+
+/* ==========================================================================
+   Print styles
+   ========================================================================== */
+
+@media print {
+    *,
+    *:before,
+    *:after {
+        background: transparent !important;
+        color: #000 !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    a,
+    a:visited {
+        text-decoration: underline;
+    }
+
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+
+    abbr[title]:after {
+        content: " (" attr(title) ")";
+    }
+
+    a[href^="#"]:after,
+    a[href^="javascript:"]:after {
+        content: "";
+    }
+
+    pre,
+    blockquote {
+        border: 1px solid #999;
+        page-break-inside: avoid;
+    }
+
+    thead {
+        display: table-header-group;
+    }
+
+    tr,
+    img {
+        page-break-inside: avoid;
+    }
+
+    img {
+        max-width: 100% !important;
+    }
+
+    p,
+    h2,
+    h3 {
+        orphans: 3;
+        widows: 3;
+    }
+
+    h2,
+    h3 {
+        page-break-after: avoid;
+    }
+}
