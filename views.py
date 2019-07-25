@@ -17,7 +17,8 @@ import json
 def index():
     # with open('books_inventory.json') as books_json:
     #    books = json.load(books_json)
-    books = json.loads(get_inventory().data)
+    r = requests.get('http:/localhost:5000/api/inventory')
+    books = json.loads(r.text)
     return render_template('index.html', books=books)
 
 
