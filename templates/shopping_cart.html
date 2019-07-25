@@ -1,8 +1,24 @@
-<ul class="shopping_cart">
-    {% for book in  %}
-        <li>
-            {% include "book.html" %}
-        </li>
+<table class="shopping_cart">
+    <tr>
+        <th id="cart_srno">Sr.No.</th>
+        <th>Title</th>
+        <th id="quantity">Quantity</th>
+        <th id="price">Price</th>
+        <th id="total">Total</th>
+
+    </tr>
+    {% for book in Cart %}
+        <tr>
+            <td>{{ book["cart_id"] }}</td>
+            <td>{{ book["book_name"] }}</td>
+            <td>{{ book["quantity"] }}</td>
+            <td>{{ book["price"] }}</td>
+            <td>{{ book["cart_total"] }}</td>
+        </tr>
     {% endfor %}
-</ul>
+    <tr>
+        <td></td><td></td><td></td><td></td>
+        <td>{{ Cart["total"] }}</td>
+    </tr>
+</table>
 
