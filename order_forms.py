@@ -5,5 +5,10 @@ from model import User, Book
 
 class OrderBookForm(Form):
     book_title = StringField('Title : ', validators=[DataRequired()])
-    #isbn = StringField('ISBN : ', validators=[DataRequired()])
+    # isbn = StringField('ISBN : ', validators=[DataRequired()])
     quantity = IntegerField('Quantity : ', validators=[DataRequired()])
+
+
+class UpdateCartForm(Form):
+
+    quantity = IntegerField('Quantity: ', default=1)

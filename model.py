@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 from settings import *
+from flask import url_for
 
 db = SQLAlchemy(app)
 
@@ -12,24 +13,26 @@ db = SQLAlchemy(app)
 class PaginatedAPIMixin(object):
     @staticmethod
     def to_collection(query, page, per_page, endpoint, **kwargs):
-        resources = query.paginate(page, per_page, False) #WHAT IS FALSE - an error flag- when an out of range page is requested
-                                                          # If True, a 404 error will be automatically returned to the client.
-                                                          # If False, an empty list will be returned for out of range pages.
+        resources = query.paginate(page, per_page,
+                                   False)  # WHAT IS FALSE - an error flag- when an out of range page is requested
+        # If True, a 404 error will be automatically returned to the client.
+        # If False, an empty list will be returned for out of range pages.
         data = {
-            'items':[item.to_dict() for item in resources.items],
+            'items': [item.to_dict() for item in resources.items],
             '_meta': {
                 'page': page,
                 'per_page': per_page,
-                'total_pages':resources.pages,
-                'total_items':resources.total
+                'total_pages': resources.pages,
+                'total_items': resources.total
             },
             '_links': {
                 'self': url_for(endpoint, page=page, per_page=per_page, **kwargs),
                 'next': url_for(endpoint, page=page + 1, per_page=per_page, **kwargs),
-                'prev': url_for(endpoint, page= page - 1, per_page=per_page, **kwargs)
+                'prev': url_for(endpoint, page=page - 1, per_page=per_page, **kwargs)
             }
         }
         return data
+
 
 class Book(db.Model, PaginatedAPIMixin):
     book_id = db.Column(db.Integer, primary_key=True)
@@ -103,14 +106,14 @@ class Inventory(db.Model):
 
 
 class User(db.Model, UserMixin):
-    user_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     email = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
     mobile_no = db.Column(db.Integer)
     address = db.Column(db.Text)
     pincode = db.Column(db.Integer, db.ForeignKey('location.pincode'))
-    ModeOfPayment = db.Column(db.String)
+    mode_of_payment = db.Column(db.String)
     token = db.Column(db.String(50), index=True, unique=True)
     token_expiration = db.Column(db.DateTime)
     orders = db.relationship('Orders', backref='user', lazy='dynamic')
@@ -127,7 +130,7 @@ class User(db.Model, UserMixin):
         return User.query.all()
 
     def get_orders(id):
-        orders = Orders.query.filter_by(user_id=id).order_by(Orders.o_id).all()
+        orders = Orders.query.filter_by(id=id).order_by(Orders.o_id).all()
         return orders
 
     def createUser(_name, _password):
@@ -158,7 +161,7 @@ class User(db.Model, UserMixin):
 
 class Orders(db.Model):
     o_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     book_name = db.Column(db.String, nullable=False)
     qty = db.Column(db.Integer)
     total_amount = db.Column(db.Float, nullable=False)
@@ -187,24 +190,26 @@ class Orders(db.Model):
 
 class Cart(db.Model):
     cart_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.ForeignKey('user.user_id'), nullable=False)
     book_name = db.Column(db.String)
+    price = db.Column(db.Float)
     quantity = db.Column(db.Integer)
-    cart_total = db.Column(db.Float)
+    total = db.Column(db.Float)
 
-    def add_to_cart(user_id,book_name,quantity):
+    def add_to_cart(user_id, book_name, quantity):
         price = db.session.query(Book.book_price).filter(Book.book_name == book_name).first()
-        cart_tot = float(price[0])*int(quantity)
-        cart = Cart(user_id=user_id, book_name=book_name, quantity=quantity, cart_total=cart_tot)
+        cart_tot = float(price[0]) * int(quantity)
+        cart = Cart(user_id=user_id, book_name=book_name, price=float(price[0]), quantity=quantity, total=cart_tot)
         db.session.add(cart)
         db.session.commit()
 
     def delete_from_cart(book_name, user_id):
-        Cart.query.filer_by(Cart.book_name == book_name).filter_by(Cart.user_id == user_id).delete()
+        Cart.query.filter(Cart.book_name == book_name).filter(Cart.user_id == user_id).delete()
         db.session.commit()
 
     def view_cart(user_id):
         cart = Cart.query.filter(Cart.user_id == user_id).all()
+        # price = db.session.query(Book.book_price).filter(Book.book_name == book_name).first()
         if len(cart) is 0:
             return None
         res = CartSchema(many=True)
@@ -214,7 +219,8 @@ class Cart(db.Model):
         items = db.session.query(Cart).filter(Cart.user_id == user_id).all()
         for item in items:
             usr = db.session.query(User.pincode).filter(User.id == item.user_id).first()
-            order = Orders(user_id=item.user_id, book_name=item.book_name, qty=item.quantity, total_amount=item.cart_total,date=datetime.utcnow(), pincode=usr.pincode)
+            order = Orders(user_id=item.user_id, book_name=item.book_name, qty=item.quantity,
+                           total_amount=item.cart_total, date=datetime.utcnow(), pincode=usr.pincode)
             db.session.add(order)
             db.session.commit()
 
@@ -256,7 +262,6 @@ class CartSchema(ma.ModelSchema):
 
 
 db.create_all()
-Cart.view_cart(1)
 # class Book(db.Model):
 #     id = db.Column(db.Integer, primary_key=True)
 #     name = db.Column(db.String(80))

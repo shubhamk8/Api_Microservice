@@ -27,43 +27,33 @@
 <!--VVVV IMP: ONLY SHOW TO PERSON WHO'S ORDERED NOBODY ELSE-->
 <h2 style="text-align:center;">Your Order</h2>
 <table class="order_memo">
-    <tr>
-        <th id="order_srno">Sr.No.</th>
-        <th>Title</th>
-         <th id="quantity">Quantity</th>
-        <th id="price">Price</th>
-        <th id="total">Total</th>
-    </tr>
+            <tr>
+            <th>Title</th>
+            <th id="quantity">Qty.</th>
+            <th id="price">Price</th>
+            <th id="total">Total</th>
 
-    <tr>
-        <td>1.</td>
-        <td><a href="{{ url_for('view_book', title='1984') }}" style="color:black; text-decoration:none;">1984</a></td>
-        <td>4</td>
-        <td>300</td>
-        <td>1200</td>
-    </tr>
-    <tr>
-        <td>2.</td>
-        <td><a href="{{ url_for('view_book', title='Harry Potter & The Chamber of Secrets') }}" style="color:black; text-decoration:none;">Harry Potter & The Chamber of Secrets</a></td>
-        <td>1</td>
-        <td>600</td>
-        <td>600</td>
-    </tr>
+        </tr>
+        {% for book in cart %}
+        {% if book['quantity'] != 0 %}
+        <tr>
 
-    <tr id="LastRow">
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td style="border: 1px solid black;"><b>1800</b></td>
-    </tr>
+            <td>{{ book["book_name"] }}</td>
+            <td  style="text-align: center;">{{ book['quantity'] }}</td>
+            <td>{{ book["price"] }}</td>
+            <td>{{ book["cart_total"] }}</td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td style="border: 1px solid black; padding: 3px;">{{ total }}</td>
+        </tr>
+
 </table>
 {% endblock %}
 
 {% block sidebar %}
-<span id="annoying">
-    <a href="{{ url_for('place_order_demo') }}">
-        ORDER
-    </a>
-</span>
 {% endblock %}
