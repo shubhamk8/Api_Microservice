@@ -4,9 +4,11 @@ from flask_login import login_user, logout_user, current_user, login_required
 from settings import app, login_manager
 from app import *
 from api import * #needed or not?
-from model import User, Book, db
+from model import db, User, Book, Cart, Orders
 from auth_forms import LoginForm, SignupForm, EditUserForm, AddressForm, PaymentForm
+from order_forms import OrderBookForm, UpdateCartForm
 
+import requests
 import json
 
 
@@ -17,17 +19,108 @@ import json
 def index():
     # with open('books_inventory.json') as books_json:
     #    books = json.load(books_json)
-    books = json.loads(get_inventory().data)
+    r = requests.get('http://localhost:5000/api/inventory')
+    books = json.loads(r.text)
     return render_template('index.html', books=books)
 
+@app.route('/cart/<int:user_id>')
+def show_cart(user_id):
+    # with open('shopping_cart.json') as cart_json:
+    #    cart = json.load(cart_json)
+     user = current_user
+     cart_books = []
+     total = 0
+     form = UpdateCartForm()
+     if user.id != user_id:
+         abort(403)
+     else:
+         cart = Cart.view_cart(user_id)
+         if cart is None:
+             pass
+         else:
+             cart = json.loads(cart)
+             for book in cart:
+                 cart_books.append(Book.get_book(book['book_name']))
+             for i in cart:
+                 total += i["cart_total"]
+         return render_template("shopping_cart.html", cart=cart, books=cart_books, form=form, total=total)
 
-@app.route('/order-memo')
-def orderMemo():
-    return render_template("order_memo.html")
 
-@app.route('/confirm-order-demo#')
-def place_order_demo():
-    return render_template("confirm_order.html")
+def InCart(title):
+    user = current_user
+    cart = Cart.view_cart(user.id)
+    if cart is not None:
+        cart = json.loads(cart)
+        for book in cart:
+            if title == book["book_name"]:
+                return True
+        else:
+            return False
+    else:
+        return False
+
+
+@app.route('/cart/add <title>')
+def AddToCart(title):
+    if InCart(title):
+        for book in cart:
+            if book['book_name'] == title:
+                book['quantity'] += 1
+    else:
+        Cart.add_to_cart(current_user.id, title, 1)
+        flash('{} added to Cart'.format(title))
+        return redirect(url_for('show_cart', user_id=current_user.id))
+
+@app.route('/cart/remove <title>')
+def RemoveFromCart(title):
+    if InCart(title):
+        Cart.delete_from_cart(title, current_user.id)
+        return redirect(request.args.get('next') or url_for('show_cart', user_id=current_user.id))
+    else:
+        flash('{} not present in Cart'.format(title))
+        return redirect(url_for('show_cart', user_id=current_user.id))
+
+@app.route('/cart/update <title>')
+def UpdateCart(title):
+    form = UpdateCartForm()
+    cart = Cart.view_cart(current_user.id)
+    if cart is None:
+        pass
+    else:
+        cart = json.loads(cart)
+        for book in cart:
+            if title == book['book_name']:
+                book['quantity'] = form.quantity.data
+        db.session.add(cart)
+        db.session.commit()
+        flash('Cart updated Successfully!')
+    return redirect(url_for('show_cart', user_id=current_user.id))
+
+
+
+@app.route('/order-memo/<int:user_id>')
+def orderMemo(user_id):
+    total = 0
+    cart = Cart.view_cart(user_id)
+    if cart is None:
+        pass
+    else:
+        cart = json.loads(cart)
+        for i in cart:
+            total += i["cart_total"]
+    return render_template("order_memo.html", cart=cart, total=total)
+
+@app.route('/confirm-order-demo/<int:user_id>)')
+def place_order_demo(user_id):
+    total = 0
+    cart = Cart.view_cart(user_id)
+    if cart is None:
+        pass
+    else:
+        cart = json.loads(cart)
+        for i in cart:
+            total += i["cart_total"]
+    return render_template("confirm_order.html", cart=cart, total=total)
 
 @app.route('/templates/address_form.html', methods=["GET", "POST"])
 @login_required
@@ -39,18 +132,13 @@ def address_form():
         db.session.add(user)
         db.session.commit()
         flash('Address added successfully')
-        return redirect(url_for('index'))
+        return redirect(url_for('user', user_id=current_user.id))
     return render_template("address_form.html", form=form)
 
 @app.route('/book/<title>')
 def view_book(title):
-    with open('books_inventory.json') as books_json:
-        books_list = json.load(books_json)
-        for book in books_list:
-            if book['title'] == title:
-                book = book
-                break
-    return render_template("view_book.html", book=book)
+    book = Book.get_book(title)
+    return render_template("view_book.html", book=book, incart=InCart(title))
 
 
 @app.route('/add-payment-mode')

@@ -154,18 +154,54 @@ nav a:hover
    Author's custom styles
    ========================================================================== */
 
+
+    .quantity_ch form{
+        overflow:hidden;
+        margin:0 0 5px;
+    }
+
+    .quantity_ch input[type=text]{
+        float:left;
+        width:40px;
+        font:700 20px Helvetica,sans-serif;
+        padding:3px 0 0;
+        text-align:center;
+    }
+    .quantity_ch .button{
+        margin:0 0 0 5px;
+        text-indent:-9999px;
+        cursor:pointer;
+        width:29px;
+        height:29px;
+        float:left;
+        text-align:center;
+        background:url(static/img/buttons.png) no-repeat;
+    }
+    .quantity_ch .dec{
+        background-position:0 -29px;
+    }
+    .quantity_ch .buttons{
+        padding:20px 0 0 140px;
+    }
+
+
+
+
     /*Link Styling*/
     a,
     a:visited {
         color:#1E5373;
+        text-decoration: none;
     }
 
     a:hover, aside a:hover, aside a:visited:hover {
-        color: #D39447
+        color: #D39447;
+        text-decoration: none;
     }
 
     aside a:hover {
         color: #F5BB73;
+        text-decoration: none;
     }
 
     aside a: visited{
@@ -236,11 +272,20 @@ ul.book {
     overflow: auto;
 }
 
+.book #book_title{
+    text-decoration: underline;
+}
 
 a.header{
     color: #326786;
     text-decoration: none;
     display: block;
+}
+
+.bill th{
+    font-family: "Trebuchet MS", Calibri, Ariel;
+    border-bottom: 1px solid black;
+    border-right:none;
 }
 
 .title{
