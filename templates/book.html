@@ -7,9 +7,27 @@
 
         <span class="info" style="margin:10px; padding: 0 5px;">
 
-        <h3><a href="{{ url_for('view_book', title=book['title']) }}">{{ book["title"] }}</a> </h3>
+        <h3><a href="{{ url_for('view_book', title=book['title']) }}" id="book_title">{{ book["title"] }}</a> </h3>
         <h4>{{ book["author"] }}</h4>
         <br>ISBN: {{ book["isbn"] }} <br> Price: Rs. {{ book["price"] }}/-
         </span>
+        {% if incart %}
+            <button style="float:right;">
+                <a href="{{ url_for('RemoveFromCart', title=book['title']) }}">
+                    Remove from Cart
+                </a>
+            </button>
+            <button style="float:right">
+                <a href="{{ url_for('show_cart', user_id=current_user.id) }}">
+                    View Cart
+                </a>
+            </button>
+        {% else %}
+            <button type="button" style="float:right">
+                <a href="{{ url_for('AddToCart', title=book['title']) }}">
+                    Add to Cart
+                </a>
+            </button>
+        {% endif %}
     </div>
 </div>
