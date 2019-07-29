@@ -126,6 +126,9 @@ class User(db.Model, UserMixin):
         else:
             return user
 
+    def get_id(self):
+        return (self.user_id)
+
     def getAllUsers(self):
         return User.query.all()
 
@@ -134,7 +137,7 @@ class User(db.Model, UserMixin):
         return orders
 
     def createUser(_name, _password):
-        new_user = User(name=_name, password_hash=_password)
+        new_user = User(email=_name, password=_password)
         db.session.add(new_user)
         db.session.commit()
 
@@ -142,7 +145,7 @@ class User(db.Model, UserMixin):
         now = datetime.utcnow()
         if self.token and self.token_expiration > now + timedelta(seconds=60):
             return self.token
-        self.token = base64.b64encode(os.urandom(24)).decode('utf-8')
+        self.token = create_access_token(self.user_id, expires_delta=timedelta(expires_in))
         self.token_expiration = now + timedelta(seconds=expires_in)
         db.session.add(self)
         db.session.commit()
@@ -222,6 +225,12 @@ class Cart(db.Model):
                            total_amount=item.cart_total, date=datetime.utcnow(), pincode=usr.pincode)
             db.session.add(order)
             db.session.commit()
+
+    def update_cart(id, quantity):
+        cart_to_update = Cart.query.filer_by(cart_id=id).first()
+        cart_to_update.quantity = quantity
+        db.session.add(cart_to_update)
+        db.session.commit()
 
 
 class BookSchema(ma.ModelSchema):
