@@ -106,7 +106,7 @@ class Inventory(db.Model):
 
 
 class User(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     email = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
@@ -127,13 +127,13 @@ class User(db.Model, UserMixin):
             return user
 
     def get_id(self):
-        return (self.id)
+        return (self.user_id)
 
     def getAllUsers(self):
         return User.query.all()
 
     def get_orders(id):
-        orders = Orders.query.filter_by(user_id=id).order_by(Orders.o_id).all()
+        orders = Orders.query.filter_by(id=id).order_by(Orders.o_id).all()
         return orders
 
     def createUser(_name, _password):
@@ -145,7 +145,7 @@ class User(db.Model, UserMixin):
         now = datetime.utcnow()
         if self.token and self.token_expiration > now + timedelta(seconds=60):
             return self.token
-        self.token = create_access_token(self.id, expires_delta=timedelta(expires_in))
+        self.token = create_access_token(self.user_id, expires_delta=timedelta(expires_in))
         self.token_expiration = now + timedelta(seconds=expires_in)
         db.session.add(self)
         db.session.commit()
@@ -164,7 +164,7 @@ class User(db.Model, UserMixin):
 
 class Orders(db.Model):
     o_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
     book_name = db.Column(db.String, nullable=False)
     qty = db.Column(db.Integer)
     total_amount = db.Column(db.Float, nullable=False)
@@ -193,14 +193,14 @@ class Orders(db.Model):
 
 class Cart(db.Model):
     cart_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.ForeignKey('user.user_id'), nullable=False)
     book_name = db.Column(db.String)
     price = db.Column(db.Float)
     quantity = db.Column(db.Integer)
     total = db.Column(db.Float)
 
     def add_to_cart(user_id, book_name, quantity):
-        price = db.session.query(Book.price).filter(Book.title == book_name).first()
+        price = db.session.query(Book.book_price).filter(Book.book_name == book_name).first()
         cart_tot = float(price[0]) * int(quantity)
         cart = Cart(user_id=user_id, book_name=book_name, price=float(price[0]), quantity=quantity, total=cart_tot)
         db.session.add(cart)
@@ -223,12 +223,12 @@ class Cart(db.Model):
         for item in items:
             usr = db.session.query(User.pincode).filter(User.id == item.user_id).first()
             order = Orders(user_id=item.user_id, book_name=item.book_name, qty=item.quantity,
-                           total_amount=item.total, date=datetime.utcnow(), pincode=usr.pincode)
+                           total_amount=item.cart_total, date=datetime.utcnow(), pincode=usr.pincode)
             db.session.add(order)
             db.session.commit()
 
     def update_cart(id, quantity):
-        cart_to_update = Cart.query.filter_by(cart_id=id).first()
+        cart_to_update = Cart.query.filer_by(cart_id=id).first()
         cart_to_update.quantity = quantity
         db.session.add(cart_to_update)
         db.session.commit()

@@ -8,16 +8,18 @@ import jwt
 
 
 @login_manager.user_loader
-def load_user(userid):
-    return User.query.get(int(userid))
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 
 def token_required(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
-        token = request.args.get('token')
+        token = request.authorization.get()
+        print(token)
         try:
             jwt.decode(token, current_user.get_token())
+            jwt.decode()
             return f(*args, **kwargs)
         except:
             return jsonify({'error': 'Need a valid token to view this page'}), 401
@@ -33,15 +35,14 @@ def get_token():
     user = User.user_pass_match(email, password)
     if user is not None:
         login_user(user, remember=False)
-        expiration_date = datetime.utcnow() + timedelta(seconds=3600)
-        token = jwt.encode({'exp': expiration_date}, user.get_token(), algorithm='HS256')
+        token = user.get_token(3600)
         return Response(token, status=401, mimetype='application/json')
     else:
         return Response('', status=401, mimetype='application/json')
 
 
 @bp.route('/users')
-@login_required
+@jwt_required
 def get_users():
     user = User.getAllUsers('self')
     user_schema = UserSchema(many=True)
@@ -50,6 +51,7 @@ def get_users():
 
 
 @bp.route('/user', methods=['POST'])
+@jwt_required
 def add_user():
     request_data = request.get_json()
     new_user = User.createUser(request_data['email'], request_data['password'])
@@ -74,7 +76,7 @@ def get_user_orders(id):
 
 
 @bp.route('/user/<int:id>/order', methods=['post'])
-@login_required
+@token_required
 def place_order(id):
     data = request.get_json()
     result = Orders.place_order(id, data['book_name'], data['qty'], data['price'], data['pincode'])
@@ -89,7 +91,7 @@ def place_order(id):
 
 
 @bp.route('/user/cart')
-@login_required
+@token_required
 def view_cart():
     cart = Cart.view_cart(current_user.user_id)
     if cart is not None:
@@ -129,3 +131,10 @@ def order_cart():
 def logout():
     logout_user()
     return Response('Logged Out Successfully...', status=200, mimetype='application/json')
+
+
+@bp.route('/user/cart/<int:id>', methods=["put"])
+def update_quantity(id):
+    req = request.get_json()
+    Cart.update_cart(id, req['quantity'])
+    return Response('', status=200, mimetype='application/json')
