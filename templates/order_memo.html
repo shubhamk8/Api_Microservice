@@ -34,14 +34,14 @@
             <th id="total">Total</th>
 
         </tr>
-        {% for book in cart %}
+        {% for book in order %}
         {% if book['quantity'] != 0 %}
         <tr>
 
             <td>{{ book["book_name"] }}</td>
-            <td  style="text-align: center;">{{ book['quantity'] }}</td>
-            <td>{{ book["price"] }}</td>
-            <td>{{ book["cart_total"] }}</td>
+            <td  style="text-align: center;">{{ book['qty'] }}</td>
+            <td>{{ book["total_amount"] }}</td>
+            <td>{{ book["total_amount"]*book["qty"] }}</td>
         </tr>
         {% endif %}
         {% endfor %}
