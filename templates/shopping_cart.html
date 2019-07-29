@@ -1,79 +1,45 @@
 {% extends "base.html" %}
-{% from "form_macros.html" import render_field%}
 
 {% block content %}
-<article>
-    {% for book in books %}
-    <div class="book">
+<table class="order_memo">
+    <tr>
+        <th id="cart_srno">Sr.No.</th>
+        <th>Title</th>
+        <th id="quantity">Quantity</th>
+        <th id="price">Price</th>
+        <th id="total">Total</th>
 
-        <div class="info">
-            <span class="bookcover">
-                    <img alt="BookCover" src="{{ book['imgsrc'] }}"
-                         style="height:auto ; width:100px; margin: 10px; padding: 0 5px 0 0; float:left;">
-            </span>
-
-            <span class="info" style="margin:10px; padding: 0 5px;">
-                    <h3><a href="{{ url_for('view_book', title=book['title']) }}"
-                           id="book_title">{{ book["title"] }}</a> </h3>
-                    <h4>{{ book["author"] }}</h4>
-                <h4> Price: Rs. {{ book["price"] }}/-</h4>
-            </span>
-
-            <table>
-            <form action="" class="quantity_ch" method="post">
-                {{ form.hidden_tag() }}
-                {{ render_field(form.quantity) }}
-
-            </form>
-
-            </table>
-            <button id="button" style="float:right;" type="button">
-                    <a href="{{ url_for('UpdateCart', title=book['title']) }}">Update Cart</a>
-            </button>
-            <button style="float:right;" type="button">
-                <a href="{{ url_for('RemoveFromCart', title=book['title']) }}" style="text-color: red;">
-                    Remove
-                </a>
-            </button>
-        </div>
-    </div>
-    {% endfor %}
-</article>
-{% endblock %}
-
-{% block sidebar %}
-<aside>
-    <h3>Order Details</h3>
-    <table class="bill" style="overflow:auto;">
+    </tr>
+    {% for book in cart %}
+    {% if book['quantity'] != 0 %}
         <tr>
-            <th>Title</th>
-            <th id="quantity">Qty.</th>
-            <th id="price">Price</th>
-            <th id="total">Total</th>
-
-        </tr>
-        {% for book in cart %}
-        {% if book['quantity'] != 0 %}
-        <tr>
-
-            <td>{{ book["book_name"] }}</td>
-            <td  style="text-align: center;">{{ book['quantity'] }}</td>
+            <td>{{ book["cart_id"] }}</td>
+            <td><a href="{{ url_for('view_book', title=book['book_name']) }}"
+                           id="book_title">{{ book["book_name"] }}</a></td>
+            <td>
+                <form method="post" action="{{ url_for('UpdateCart', title=book['book_name']) }}" class="quantity_ch">
+                    <div><input type="number" name="quantity" min="1" value="{{ book['quantity'] }}" style="border:0 1px 1px 0; background-color:inherit; text-align:center;">
+                         <input type="submit" value="Save" id="submit" style="float:right; border:none; background-color:inherit; color:blue; font-size:6;">
+                    </div>
+                </form>
+            </td>
             <td>{{ book["price"] }}</td>
             <td>{{ book["cart_total"] }}</td>
         </tr>
-        {% endif %}
-        {% endfor %}
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td style="border: 1px solid black; padding: 3px; background-color:#e6f3ff;">{{ total }}</td>
-        </tr>
+    {% endif %}
+    {% endfor %}
+    <tr>
+        <td></td><td></td><td></td><td></td>
+        <td style="border: 1px solid black;">{{ total }}</td>
+    </tr>
+</table>
+<br><button style="margin: auto; float:right;">
+    <a href="{{ url_for('place_order_demo', user_id=current_user.id) }}"> Place Order </a>
+</button>
 
-    </table>
-    <br>
-    <button>
-        <a href="{{ url_for('place_order_demo', user_id=current_user.id) }}"> Place Order </a>
-    </button>
-</aside>
 {% endblock %}
+
+{% block sidebar %}
+
+{% endblock %}
+

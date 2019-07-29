@@ -27,23 +27,19 @@ def index():
 def show_cart(user_id):
     # with open('shopping_cart.json') as cart_json:
     #    cart = json.load(cart_json)
-     user = current_user
-     cart_books = []
-     total = 0
-     form = UpdateCartForm()
-     if user.id != user_id:
-         abort(403)
-     else:
-         cart = Cart.view_cart(user_id)
-         if cart is None:
-             pass
-         else:
-             cart = json.loads(cart)
-             for book in cart:
-                 cart_books.append(Book.get_book(book['book_name']))
-             for i in cart:
-                 total += i["cart_total"]
-         return render_template("shopping_cart.html", cart=cart, books=cart_books, form=form, total=total)
+    total = 0
+
+    if current_user.id != user_id:
+        abort(403)
+    else:
+        cart = Cart.view_cart(user_id)
+        if cart is None:
+            cart = [{"book_name":" ", "quantity":" ", "price":" ", "total":" "}]
+        else:
+            cart = json.loads(cart)
+            for i in cart:
+                total += i["total"]
+        return render_template("shopping_cart.html", cart=cart, total=total)
 
 
 def InCart(title):
@@ -80,20 +76,20 @@ def RemoveFromCart(title):
         flash('{} not present in Cart'.format(title))
         return redirect(url_for('show_cart', user_id=current_user.id))
 
-@app.route('/cart/update <title>')
+@app.route('/cart/update <title>', methods=['POST', 'GET'])
 def UpdateCart(title):
-    form = UpdateCartForm()
     cart = Cart.view_cart(current_user.id)
     if cart is None:
         pass
     else:
-        cart = json.loads(cart)
-        for book in cart:
-            if title == book['book_name']:
-                book['quantity'] = form.quantity.data
-        db.session.add(cart)
-        db.session.commit()
-        flash('Cart updated Successfully!')
+        if request.method == 'POST':
+            cart = json.loads(cart)
+            for book in cart:
+                print(book)
+                print(request.form.get('quantity'))
+                Cart.update_cart(book['cart_id'], request.form.get('quantity'))
+                print(book)
+                flash('Cart updated Successfully!')
     return redirect(url_for('show_cart', user_id=current_user.id))
 
 
@@ -110,7 +106,9 @@ def orderMemo(user_id):
             total += i["cart_total"]
     return render_template("order_memo.html", cart=cart, total=total)
 
+
 @app.route('/confirm-order-demo/<int:user_id>)')
+@login_required
 def place_order_demo(user_id):
     total = 0
     cart = Cart.view_cart(user_id)
@@ -118,9 +116,25 @@ def place_order_demo(user_id):
         pass
     else:
         cart = json.loads(cart)
-        for i in cart:
-            total += i["cart_total"]
-    return render_template("confirm_order.html", cart=cart, total=total)
+        if current_user.address is not None:
+
+                # url = "http://localhost:5000/api/user/cart/order"
+                # rp = requests.get(url=url, params=str(current_user))
+                Cart.cart_order(current_user.id)
+                # params = {'id':current_user.id}
+                #url = "http://localhost:5000/user/{}/orders".format(current_user.id)
+                #rg = requests.get(url=url)
+                # order = json.loads(rg.text)
+                orders = User.get_orders(current_user.id)
+                for book in orders:
+                    total += (book.total_amount*book.qty)
+                return render_template("order_memo.html", order=orders, total=total)
+        else:
+            flash("Enter delivery address")
+            return redirect(url_for('address_form'))
+
+# return render_template("confirm_order.html", cart=cart, total=total)
+
 
 @app.route('/templates/address_form.html', methods=["GET", "POST"])
 @login_required
@@ -132,8 +146,9 @@ def address_form():
         db.session.add(user)
         db.session.commit()
         flash('Address added successfully')
-        return redirect(url_for('user', user_id=current_user.id))
+        return redirect(request.args.get('next') or url_for('user', user_id=current_user.id))
     return render_template("address_form.html", form=form)
+
 
 @app.route('/book/<title>')
 def view_book(title):
