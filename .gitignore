@@ -9582,3 +9582,6 @@ venv/Lib/site-packages/yaml/__pycache__/tokens.cpython-37.pyc
 venv/Lib/site-packages/__pycache__/flask_injector.cpython-37.pyc
 venv/Lib/site-packages/__pycache__/inflection.cpython-37.pyc
 venv/Lib/site-packages/__pycache__/inflection.cpython-37.pyc
+.idea/workspace.xml
+__pycache__/model.cpython-37.pyc
+__pycache__/settings.cpython-37.pyc
