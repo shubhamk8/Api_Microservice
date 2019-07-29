@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_marshmallow import Marshmallow
 from flask_login import LoginManager
-from flask_jwt_extended import JWTManager, jwt_required, create_access_token,get_jwt_identity
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token,get_jwt_identity,get_raw_jwt
 
 app = Flask(__name__)
 
