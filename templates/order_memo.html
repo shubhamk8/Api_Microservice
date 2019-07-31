@@ -26,6 +26,7 @@
 {% block content %}
 <!--VVVV IMP: ONLY SHOW TO PERSON WHO'S ORDERED NOBODY ELSE-->
 <h2 style="text-align:center;">Your Order</h2>
+{% if not empty %}
 <table class="order_memo">
             <tr>
             <th>Title</th>
@@ -37,7 +38,6 @@
         {% for book in order %}
         {% if book['quantity'] != 0 %}
         <tr>
-
             <td>{{ book["book_name"] }}</td>
             <td  style="text-align: center;">{{ book['qty'] }}</td>
             <td>{{ book["total_amount"] }}</td>
@@ -53,6 +53,11 @@
         </tr>
 
 </table>
+{% else %}
+<div style="text-align:center; font-size: 20px;">
+    You have no ongoing orders! Place an order from your <a href="{{ url_for('show_cart', user_id=current_user.id) }}">Cart</a>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block sidebar %}
