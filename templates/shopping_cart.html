@@ -1,21 +1,25 @@
 {% extends "base.html" %}
 
 {% block content %}
+<br>
+<h2 style="text-align:center;">Cart</h2>
+{% if not empty %}
 <table class="order_memo">
     <tr>
-        <th id="cart_srno">Sr.No.</th>
         <th>Title</th>
         <th id="quantity">Quantity</th>
         <th id="price">Price</th>
         <th id="total">Total</th>
-
     </tr>
     {% for book in cart %}
     {% if book['quantity'] != 0 %}
         <tr>
-            <td>{{ book["cart_id"] }}</td>
             <td><a href="{{ url_for('view_book', title=book['book_name']) }}"
-                           id="book_title">{{ book["book_name"] }}</a></td>
+                           id="book_title">{{ book["book_name"] }}</a>
+                <a href="{{ url_for('RemoveFromCart', title=book['book_name']) }}">
+            <img src="../static/img/red_cross_button.jpg" style="float:right; height:auto; width:20px;">
+        </a>
+            </td>
             <td>
                 <form method="post" action="{{ url_for('UpdateCart', title=book['book_name']) }}" class="quantity_ch">
                     <div><input type="number" name="quantity" min="1" value="{{ book['quantity'] }}" style="border:0 1px 1px 0; background-color:inherit; text-align:center;">
@@ -24,19 +28,24 @@
                 </form>
             </td>
             <td>{{ book["price"] }}</td>
-            <td>{{ book["cart_total"] }}</td>
+            <td>{{ book["total"] }}</td>
         </tr>
     {% endif %}
     {% endfor %}
     <tr>
-        <td></td><td></td><td></td><td></td>
-        <td style="border: 1px solid black;">{{ total }}</td>
+        <td></td><td></td><td></td>
+        <td style="border: 2px solid black;">{{ total }}</td>
     </tr>
 </table>
-<br><button style="margin: auto; float:right;">
+<br><button style="margin: auto; position:absolute; right:420px;">
     <a href="{{ url_for('place_order_demo', user_id=current_user.id) }}"> Place Order </a>
 </button>
-
+<br>
+{% else %}
+<div style="text-align:center; font-size: 20px;">
+Your cart is empty! Add some books from our <a href="{{ url_for('index') }}">Store</a>.
+</div>
+{% endif %}
 {% endblock %}
 
 {% block sidebar %}
