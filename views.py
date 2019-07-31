@@ -28,18 +28,19 @@ def show_cart(user_id):
     # with open('shopping_cart.json') as cart_json:
     #    cart = json.load(cart_json)
     total = 0
-
+    empty = False
     if current_user.id != user_id:
         abort(403)
     else:
         cart = Cart.view_cart(user_id)
         if cart is None:
-            cart = [{"book_name":" ", "quantity":" ", "price":" ", "total":" "}]
+            cart = []
+            empty = True
         else:
             cart = json.loads(cart)
             for i in cart:
                 total += i["total"]
-        return render_template("shopping_cart.html", cart=cart, total=total)
+        return render_template("shopping_cart.html", cart=cart, total=total, empty=empty)
 
 
 def InCart(title):
@@ -58,6 +59,10 @@ def InCart(title):
 
 @app.route('/cart/add <title>')
 def AddToCart(title):
+    if Cart.view_cart(current_user.id) is not None:
+        cart = json.loads(Cart.view_cart(current_user.id))
+    else:
+        cart = {}
     if InCart(title):
         for book in cart:
             if book['book_name'] == title:
@@ -65,7 +70,7 @@ def AddToCart(title):
     else:
         Cart.add_to_cart(current_user.id, title, 1)
         flash('{} added to Cart'.format(title))
-        return redirect(url_for('show_cart', user_id=current_user.id))
+    return redirect(url_for('index'))
 
 @app.route('/cart/remove <title>')
 def RemoveFromCart(title):
@@ -97,14 +102,17 @@ def UpdateCart(title):
 @app.route('/order-memo/<int:user_id>')
 def orderMemo(user_id):
     total = 0
-    cart = Cart.view_cart(user_id)
-    if cart is None:
-        pass
+    empty = False
+    if user_id != current_user.id:
+        abort(403)
     else:
-        cart = json.loads(cart)
-        for i in cart:
-            total += i["cart_total"]
-    return render_template("order_memo.html", cart=cart, total=total)
+        orders = User.get_orders(current_user.id)
+        for book in orders:
+            total += (book.total_amount * book.qty)
+        if total == 0:
+            empty = True
+        return render_template("order_memo.html", order=orders, total=total, empty=empty)
+
 
 
 @app.route('/confirm-order-demo/<int:user_id>)')
@@ -156,16 +164,16 @@ def view_book(title):
     return render_template("view_book.html", book=book, incart=InCart(title))
 
 
-@app.route('/add-payment-mode')
+@app.route('/add-payment-mode', methods=["GET","POST"])
 def obtain_paymentmode():
     form = PaymentForm()
     if form.validate_on_submit():
         user = current_user
-        user.ModeOfPayment = form.ModeOfPayment.data
+        user.mode_of_payment = form.ModeOfPayment.data
         db.session.add(user)
         db.session.commit()
         flash('Payment Mode added successfully')
-        return redirect(url_for('index'))
+        return redirect(url_for('user', user_id=current_user.id))
     return render_template("payment_method_form.html", form=form)
 
 
